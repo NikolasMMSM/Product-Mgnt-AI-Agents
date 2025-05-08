@@ -72,12 +72,15 @@ Instructions:
     if st.button("🔍 Generate AI Analysis"):
         with st.spinner("The Agent is thinking..."):
             try:
-                response = openai.ChatCompletion.create(
+                client = openai.OpenAI()
+
+                response = client.chat.completions.create(
                     model="gpt-4",
                     messages=[{"role": "user", "content": prompt}],
                     temperature=0.4
-                )
+                    )
                 analysis = response.choices[0].message.content.strip()
+
                 st.markdown("### 📊 Analysis Done!")
                 st.write(analysis)
             except Exception as e:
