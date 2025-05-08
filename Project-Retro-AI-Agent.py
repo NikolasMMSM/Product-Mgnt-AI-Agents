@@ -3,6 +3,8 @@ import pandas as pd
 import openai
 import os
 from datetime import datetime
+from dotenv import load_dotenv
+load_dotenv()
 
 # Configure your OpenAI API key
 openai.api_key = os.getenv("OPENAI_API_KEY")  # ou substitua por sua chave direto (não recomendado em produção)
