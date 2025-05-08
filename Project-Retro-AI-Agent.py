@@ -4,11 +4,11 @@ import openai
 import os
 from datetime import datetime
 
-# Configure sua chave da OpenAI
+# Configure your OpenAI API key
 openai.api_key = os.getenv("OPENAI_API_KEY")  # ou substitua por sua chave direto (não recomendado em produção)
 
-st.set_page_config(page_title="AI Agent - Project Analysis", layout="wide")
-st.title("🤖 AI Agent para Análise de Projeto Concluído")
+st.set_page_config(page_title="AI Agent - Project Retrospective Insights", layout="wide")
+st.title("🤖 AI Agent that Analyses Concluded Projects")
 
 uploaded_file = st.file_uploader("📁 Faça upload do CSV do projeto", type="csv")
 
@@ -21,7 +21,7 @@ if uploaded_file:
     df = df.dropna(subset=['Activated Date', 'Closed Date'])
     df['Execution Time (days)'] = (df['Closed Date'] - df['Activated Date']).dt.days
 
-    # Métricas principais
+    # Key metrics
     total_items = len(df)
     total_story_points = df['Story Points'].sum()
     avg_story_points = round(df['Story Points'].mean(), 2)
@@ -38,7 +38,7 @@ if uploaded_file:
     for _, row in by_assignee.iterrows():
         top_contributors.append(f"- {row['Assigned To']}: {int(row['Items_Completed'])} items, {int(row['Total_Story_Points'])} points, avg. {round(row['Avg_Execution_Time'], 1)} days")
 
-    # Construção do prompt
+    # Prompt construction
     prompt = f"""
 You are a product analyst. Below are the execution data of a completed project. Your task is to generate an executive summary of the delivery, highlighting strengths, bottlenecks, and opportunities for improvement. Also take into account the Story Points scale used to estimate task effort.
 
