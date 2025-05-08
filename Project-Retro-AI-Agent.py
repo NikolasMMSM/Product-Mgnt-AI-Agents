@@ -4,20 +4,20 @@ import openai
 import os
 from datetime import datetime
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv(dothenv_patch="envconfig.env")
 
-# Configure your OpenAI API key
-openai.api_key = os.getenv("OPENAI_API_KEY")  # ou substitua por sua chave direto (não recomendado em produção)
+# Configure your OpenAI API key in the envconfig.env file
+openai.api_key = os.getenv("OPENAI_API_KEY") 
 
 st.set_page_config(page_title="AI Agent - Project Retrospective Insights", layout="wide")
 st.title("🤖 AI Agent that Analyses Concluded Projects")
 
-uploaded_file = st.file_uploader("📁 Faça upload do CSV do projeto", type="csv")
+uploaded_file = st.file_uploader("📁 Upload your project CSV file", type="csv")
 
 if uploaded_file:
     df = pd.read_csv(uploaded_file)
 
-    # Conversão de datas e cálculo de tempo
+    # date and time conversion
     df['Activated Date'] = pd.to_datetime(df['Activated Date'], errors='coerce')
     df['Closed Date'] = pd.to_datetime(df['Closed Date'], errors='coerce')
     df = df.dropna(subset=['Activated Date', 'Closed Date'])
@@ -29,7 +29,7 @@ if uploaded_file:
     avg_story_points = round(df['Story Points'].mean(), 2)
     avg_exec_time = round(df['Execution Time (days)'].mean(), 2)
 
-    # Top contribuidores
+    # Top contributors
     by_assignee = df.groupby('Assigned To').agg(
         Items_Completed=('Title', 'count'),
         Total_Story_Points=('Story Points', 'sum'),
