@@ -28,6 +28,7 @@ if uploaded_file:
     total_story_points = df['Story Points'].sum()
     avg_story_points = round(df['Story Points'].mean(), 2)
     avg_exec_time = round(df['Execution Time (days)'].mean(), 2)
+    max_exec_time = round(df['Execution Time (days)'].max(), 2)
 
     # Top contributors
     by_assignee = df.groupby('Assigned To').agg(
@@ -68,8 +69,8 @@ Instructions:
 - Respond in a professional, executive tone.
 """
 
-    if st.button("🔍 Gerar Análise com IA"):
-        with st.spinner("Consultando o analista virtual..."):
+    if st.button("🔍 Generate AI Analysis"):
+        with st.spinner("The Agent is thinking..."):
             try:
                 response = openai.ChatCompletion.create(
                     model="gpt-4",
@@ -77,7 +78,7 @@ Instructions:
                     temperature=0.4
                 )
                 analysis = response.choices[0].message.content.strip()
-                st.markdown("### 📊 Análise Gerada")
+                st.markdown("### 📊 Analysis Done!")
                 st.write(analysis)
             except Exception as e:
-                st.error(f"Erro ao consultar o modelo: {e}")
+                st.error(f"Error - Review the model: {e}")
