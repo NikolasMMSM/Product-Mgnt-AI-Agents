@@ -1,0 +1,32 @@
+# Arquivo de variáveis sensíveis
+envconfig.env
+
+# Dados de execução e caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+
+# Configuração de ambiente
+.venv/
+env/
+venv/
+.idea/
+.vscode/
+
+# Arquivos temporários
+*.log
+*.tmp
+.DS_Store
+
+# Arquivos de notebook convertidos
+.ipynb_checkpoints/
+
+# Exportações de Streamlit (se usados)
+*.csv
+*.xlsx
+
+# Diretórios de deploy (opcional)
+build/
+dist/

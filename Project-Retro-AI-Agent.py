@@ -3,19 +3,21 @@ import pandas as pd
 import openai
 import os
 from datetime import datetime
+from dotenv import load_dotenv
+load_dotenv(dothenv_patch="envconfig.env")
 
-# Configure your OpenAI API key
-openai.api_key = os.getenv("OPENAI_API_KEY")  # ou substitua por sua chave direto (não recomendado em produção)
+# Configure your OpenAI API key in the envconfig.env file
+openai.api_key = os.getenv("OPENAI_API_KEY") 
 
 st.set_page_config(page_title="AI Agent - Project Retrospective Insights", layout="wide")
 st.title("🤖 AI Agent that Analyses Concluded Projects")
 
-uploaded_file = st.file_uploader("📁 Faça upload do CSV do projeto", type="csv")
+uploaded_file = st.file_uploader("📁 Upload your project CSV file", type="csv")
 
 if uploaded_file:
     df = pd.read_csv(uploaded_file)
 
-    # Conversão de datas e cálculo de tempo
+    # date and time conversion
     df['Activated Date'] = pd.to_datetime(df['Activated Date'], errors='coerce')
     df['Closed Date'] = pd.to_datetime(df['Closed Date'], errors='coerce')
     df = df.dropna(subset=['Activated Date', 'Closed Date'])
@@ -26,8 +28,9 @@ if uploaded_file:
     total_story_points = df['Story Points'].sum()
     avg_story_points = round(df['Story Points'].mean(), 2)
     avg_exec_time = round(df['Execution Time (days)'].mean(), 2)
+    max_exec_time = round(df['Execution Time (days)'].max(), 2)
 
-    # Top contribuidores
+    # Top contributors
     by_assignee = df.groupby('Assigned To').agg(
         Items_Completed=('Title', 'count'),
         Total_Story_Points=('Story Points', 'sum'),
@@ -66,8 +69,8 @@ Instructions:
 - Respond in a professional, executive tone.
 """
 
-    if st.button("🔍 Gerar Análise com IA"):
-        with st.spinner("Consultando o analista virtual..."):
+    if st.button("🔍 Generate AI Analysis"):
+        with st.spinner("The Agent is thinking..."):
             try:
                 response = openai.ChatCompletion.create(
                     model="gpt-4",
@@ -75,7 +78,7 @@ Instructions:
                     temperature=0.4
                 )
                 analysis = response.choices[0].message.content.strip()
-                st.markdown("### 📊 Análise Gerada")
+                st.markdown("### 📊 Analysis Done!")
                 st.write(analysis)
             except Exception as e:
-                st.error(f"Erro ao consultar o modelo: {e}")
+                st.error(f"Error - Review the model: {e}")
