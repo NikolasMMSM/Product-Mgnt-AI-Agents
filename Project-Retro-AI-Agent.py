@@ -1,0 +1,81 @@
+import streamlit as st
+import pandas as pd
+import openai
+import os
+from datetime import datetime
+
+# Configure sua chave da OpenAI
+openai.api_key = os.getenv("OPENAI_API_KEY")  # ou substitua por sua chave direto (não recomendado em produção)
+
+st.set_page_config(page_title="AI Agent - Project Analysis", layout="wide")
+st.title("🤖 AI Agent para Análise de Projeto Concluído")
+
+uploaded_file = st.file_uploader("📁 Faça upload do CSV do projeto", type="csv")
+
+if uploaded_file:
+    df = pd.read_csv(uploaded_file)
+
+    # Conversão de datas e cálculo de tempo
+    df['Activated Date'] = pd.to_datetime(df['Activated Date'], errors='coerce')
+    df['Closed Date'] = pd.to_datetime(df['Closed Date'], errors='coerce')
+    df = df.dropna(subset=['Activated Date', 'Closed Date'])
+    df['Execution Time (days)'] = (df['Closed Date'] - df['Activated Date']).dt.days
+
+    # Métricas principais
+    total_items = len(df)
+    total_story_points = df['Story Points'].sum()
+    avg_story_points = round(df['Story Points'].mean(), 2)
+    avg_exec_time = round(df['Execution Time (days)'].mean(), 2)
+
+    # Top contribuidores
+    by_assignee = df.groupby('Assigned To').agg(
+        Items_Completed=('Title', 'count'),
+        Total_Story_Points=('Story Points', 'sum'),
+        Avg_Execution_Time=('Execution Time (days)', 'mean')
+    ).sort_values(by='Total_Story_Points', ascending=False).head(3).reset_index()
+
+    top_contributors = []
+    for _, row in by_assignee.iterrows():
+        top_contributors.append(f"- {row['Assigned To']}: {int(row['Items_Completed'])} items, {int(row['Total_Story_Points'])} points, avg. {round(row['Avg_Execution_Time'], 1)} days")
+
+    # Construção do prompt
+    prompt = f"""
+You are a product analyst. Below are the execution data of a completed project. Your task is to generate an executive summary of the delivery, highlighting strengths, bottlenecks, and opportunities for improvement. Also take into account the Story Points scale used to estimate task effort.
+
+Project Data:
+- Total items delivered: {total_items}
+- Total Story Points: {total_story_points}
+- Average Story Points per item: {avg_story_points}
+- Average execution time per item: {avg_exec_time} days
+- Top contributors:\n  """ + "\n  ".join(top_contributors) + """
+
+Story Points Guide (Fibonacci Scale):
+- 1: Extra small – One-line change or similar work, can be done in 1 hour.
+- 2: Small – Developer understands the task, requires small problem-solving.
+- 3: Average – Developer knows what to do, no research required.
+- 5: Large – Task is not very common, may require help or some research.
+- 8: Extra Large – Time-consuming, needs research and possibly multiple developers.
+- 13: Warning – Complex, many unknowns, likely won't fit in one sprint.
+- 21: Hazard – Very complex, unclear how to start, many assumptions and unknowns.
+
+Instructions:
+- Interpret whether delivery time is compatible with the estimated complexity.
+- Identify potential estimation mistakes.
+- Suggest improvement points for future sprints.
+- Highlight strong individual contributions and possible performance issues.
+- Respond in a professional, executive tone.
+"""
+
+    if st.button("🔍 Gerar Análise com IA"):
+        with st.spinner("Consultando o analista virtual..."):
+            try:
+                response = openai.ChatCompletion.create(
+                    model="gpt-4",
+                    messages=[{"role": "user", "content": prompt}],
+                    temperature=0.4
+                )
+                analysis = response.choices[0].message.content.strip()
+                st.markdown("### 📊 Análise Gerada")
+                st.write(analysis)
+            except Exception as e:
+                st.error(f"Erro ao consultar o modelo: {e}")
