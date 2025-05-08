@@ -4,7 +4,7 @@ import openai
 import os
 from datetime import datetime
 from dotenv import load_dotenv
-load_dotenv(dothenv_patch="envconfig.env")
+load_dotenv(dotenv_patch="envconfig.env")
 
 # Configure your OpenAI API key in the envconfig.env file
 openai.api_key = os.getenv("OPENAI_API_KEY") 
