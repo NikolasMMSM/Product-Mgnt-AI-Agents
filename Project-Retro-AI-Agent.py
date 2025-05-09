@@ -22,6 +22,7 @@ status_options = {"Initial": "initial", "In Progress": "in_progress", "Completed
 project_status = st.selectbox("📌 What is the current project status?", list(status_options.keys()))
 
 if uploaded_file:
+    st.markdown("### 📌 Key Metrics Preview")
     raw_df = pd.read_csv(uploaded_file)
     df = raw_df.copy()
 
@@ -59,13 +60,15 @@ if uploaded_file:
     for _, row in by_assignee.iterrows():
         top_contributors.append(f"- {row['Assigned To']}: {int(row['Items_Completed'])} items, {int(row['Total_Story_Points'])} points, avg. {round(row['Avg_Execution_Time'], 1)} days")
 
+        st.code(key_metrics_text.strip(), language='markdown')
+
     # Conditional prompt based on status
     analysis_status = status_options[project_status]
 
     if analysis_status == "initial":
         focus = "Your task is to analyze the initial planning quality. Focus on identifying unrealistic target dates, missing estimates, or high-complexity tasks with short deadlines."
     elif analysis_status == "in_progress":
-        focus = "Your task is to evaluate current execution. Focus on task distribution, estimated effort versus active progress, unrealistic target dates based on the job progress, missing estimates, bottlenecks, analyze contributor's performance and identify risks, blockers."
+        focus = "Your task is to evaluate current execution. Focus on task distribution, estimated effort versus active progress, and identify risks or blockers."
     else:
         focus = "Your task is to generate an executive summary of the delivery, highlighting strengths, bottlenecks, and opportunities for improvement."
 
@@ -83,7 +86,7 @@ Key Metrics:
 """
 
     prompt = f"""
-{key_metrics_text}
+## {key_metrics_text.strip()}
 
 You are a product analyst. Below are the execution data of a digital project. {focus}
 Also take into account the Story Points scale used to estimate task effort.
@@ -119,19 +122,29 @@ Instructions:
 - Suggest improvement points for future sprints.
 - Highlight strong individual contributions and possible performance issues.
 - Respond in a professional, executive tone.
-- Always include the key metrics in your response
+- Always return the Key Metrics presented in this prompt in your response
+- Split your answer into topics
 """
 
-
-    if st.button("🔍 Generate Report"):
+    if st.button("🔍 Generate AI Analysis"):
         with st.spinner("AI is thinking..."):
             try:
                 client = openai.OpenAI()
-                response = client.chat.completions.create(
-                    model="gpt-3.5-turbo",
-                    messages=[{"role": "user", "content": prompt}],
-                    temperature=0.4
-                )
+                try:
+                    response = client.chat.completions.create(
+                        model="gpt-4",
+                        messages=[{"role": "user", "content": prompt}],
+                        temperature=0.4
+                    )
+                except openai.BadRequestError as err:
+                    if "model" in str(err) and "gpt-4" in str(err):
+                        response = client.chat.completions.create(
+                            model="gpt-3.5-turbo",
+                            messages=[{"role": "user", "content": prompt}],
+                            temperature=0.4
+                        )
+                    else:
+                        raise err
                 analysis = response.choices[0].message.content.strip()
                 st.markdown("### 📊 Analysis Result")
                 st.write(analysis)
