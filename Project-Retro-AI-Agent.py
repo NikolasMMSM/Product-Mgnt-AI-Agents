@@ -158,6 +158,6 @@ Instructions:
                     }
                     </script>
                     <button onclick="copyReport()">📋 Copy Report to Clipboard</button>
-                """), unsafe_allow_html=True
+                """, unsafe_allow_html=True)
             except Exception as e:
                 st.error(f"Model consultation error: {e}")
