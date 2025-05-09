@@ -6,7 +6,9 @@ from datetime import datetime
 from dotenv import load_dotenv
 
 # Load environment variables
-load_dotenv(dotenv_path="envconfig.env")
+# If you're deploying this code to Streamlit Cloud, you may will need to comment line 11
+# and define OPENAI_API_KEY directly in the app's Secrets Manager instead.
+# load_dotenv(dotenv_path="envconfig.env")
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 st.set_page_config(page_title="AI Agent - Project Consultant", layout="wide")
@@ -36,6 +38,14 @@ if uploaded_file:
     max_exec_time = round(df['Execution Time (days)'].max(), 2) if 'Execution Time (days)' in df else 0
     min_exec_time = round(df['Execution Time (days)'].min(), 2) if 'Execution Time (days)' in df else 0
     exec_time_std = round(df['Execution Time (days)'].std(), 2) if 'Execution Time (days)' in df else 0
+
+    # Count tasks with no estimate
+    tasks_without_estimate = df['Story Points'].isna().sum()
+
+    # Contributor with highest execution time variation
+    contributor_variability = df.groupby('Assigned To')['Execution Time (days)'].std().sort_values(ascending=False)
+    top_variability_contributor = contributor_variability.idxmax() if not contributor_variability.empty else "N/A"
+    top_variability_value = round(contributor_variability.max(), 2) if not contributor_variability.empty else 0
 
     # Top contributors
     by_assignee = df.groupby('Assigned To').agg(
@@ -71,9 +81,11 @@ Project Data:
 - Maximum execution time for a single item: {max_exec_time} days
 - Minimum execution time for a single item: {min_exec_time} days
 - Standard deviation of execution time: {exec_time_std} days
+- Tasks without Story Point estimate: {tasks_without_estimate}
+- Contributor with highest time variability: {top_variability_contributor} ({top_variability_value} days)
 - Top contributors:\n  """ + "\n  ".join(top_contributors) + """
 
-Story Points Guide (Fibonacci Scale):
+Story Points Guide (Fibonacci Scale with end at number 21):
 - 1: Extra small – One-line change or similar work, can be done in 1 hour.
 - 2: Small – Developer understands the task, requires small problem-solving.
 - 3: Average – Developer knows what to do, no research required.
@@ -86,6 +98,8 @@ Instructions:
 - Interpret whether delivery time is compatible with the estimated complexity.
 - Identify potential estimation mistakes.
 - Evaluate the variability in execution time to detect inconsistencies or outliers.
+- Highlight the number of tasks with no estimate and suggest if estimation hygiene is an issue.
+- Identify contributors with inconsistent delivery speed and suggest mentoring or scope review.
 - Suggest improvement points for future sprints.
 - Highlight strong individual contributions and possible performance issues.
 - Respond in a professional, executive tone.
@@ -96,7 +110,7 @@ Instructions:
             try:
                 client = openai.OpenAI()
                 response = client.chat.completions.create(
-                    model="4o-mini",
+                    model="gpt-4",
                     messages=[{"role": "user", "content": prompt}],
                     temperature=0.4
                 )
