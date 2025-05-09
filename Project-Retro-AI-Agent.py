@@ -101,42 +101,44 @@ if scope_key == "sprint_review" and sprint_number:
 instructions = scope_config[scope_key]["instructions"]
 
 if st.button("🔍 Generate AI Analysis"):
-#    if scope_key == "sprint_review" and not sprint_number:
-#        st.warning("Please enter a Sprint Number before generating the Sprint Review analysis.")
-        # st.stop()
+    with st.spinner("AI is thinking..."):
+        if scope_key == "sprint_review" and not sprint_number:
+            st.warning("Please enter a Sprint Number before generating the Sprint Review analysis.")
+            st.stop()
+        
         prompt = f"""
-              ## {key_metrics_text.strip()}
+                ## {key_metrics_text.strip()}
 
-              {focus}
-              Also, take into account the Story Points scale used to estimate task effort.
+                {focus}
+                Also, take into account the Story Points scale used to estimate task effort.
 
-              Project Data:
-              - Total items: {total_items}
-              - Total Story Points: {total_story_points}
-              - Average Story Points per item: {avg_story_points}
-              - Average execution time per item: {avg_exec_time} days
-              - Maximum execution time for a single item: {max_exec_time} days
-              - Minimum execution time for a single item: {min_exec_time} days
-              - Standard deviation of execution time: {exec_time_std} days
-              - Tasks without Story Point estimate: {tasks_without_estimate}
-              - Contributor with highest time variability: {top_variability_contributor} ({top_variability_value} days)
-              - Top contributors:\n  """ + "\n  ".join(top_contributors) + (f"""
-              - Work items in Sprint {sprint_number}:\n
+                Project Data:
+                - Total items: {total_items}
+                - Total Story Points: {total_story_points}
+                - Average Story Points per item: {avg_story_points}
+                - Average execution time per item: {avg_exec_time} days
+                - Maximum execution time for a single item: {max_exec_time} days
+                - Minimum execution time for a single item: {min_exec_time} days
+                - Standard deviation of execution time: {exec_time_std} days
+                - Tasks without Story Point estimate: {tasks_without_estimate}
+                - Contributor with highest time variability: {top_variability_contributor} ({top_variability_value} days)
+                - Top contributors:\n  """ + "\n  ".join(top_contributors) + (f"""
+                - Work items in Sprint {sprint_number}:\n
                 """ + "\n  ".join([f"  - {row['Title']} (ID: {row['ID']})" for _, row in df.iterrows()]) if scope_key == "sprint_review" and sprint_number and 'Title' in df.columns and 'ID' in df.columns else "") + f"""
 
-              Story Points Guide (Fibonacci Scale):
-              - 1: Extra small – One-line change or similar work, can be done in 1 hour.
-              - 2: Small – Developer understands the task, requires small problem-solving.
-              - 3: Average – Developer knows what to do, no research required.
-              - 5: Large – Task is not very common, may require help or some research.
-              - 8: Extra Large – Time-consuming, needs research and possibly multiple developers.
-              - 13: Warning – Complex, many unknowns, likely won't fit in one sprint.
-              - 21: Hazard – Very complex, unclear how to start, many assumptions and unknowns.
-              (Note: 21 is the upper limit of the story point scale used in this analysis.)
+                Story Points Guide (Fibonacci Scale):
+                - 1: Extra small – One-line change or similar work, can be done in 1 hour.
+                - 2: Small – Developer understands the task, requires small problem-solving.
+                - 3: Average – Developer knows what to do, no research required.
+                - 5: Large – Task is not very common, may require help or some research.
+                - 8: Extra Large – Time-consuming, needs research and possibly multiple developers.
+                - 13: Warning – Complex, many unknowns, likely won't fit in one sprint.
+                - 21: Hazard – Very complex, unclear how to start, many assumptions and unknowns.
+                (Note: 21 is the upper limit of the story point scale used in this analysis.)
 
-              Instructions:
-              {instructions}
-              """
+                Instructions:
+                {instructions}
+                """
 
         try:
             client = openai.OpenAI()
@@ -162,7 +164,7 @@ if st.button("🔍 Generate AI Analysis"):
                         alert('Failed to copy text: ', err);
                         });
                     }
-                    </script>
+                </script>
                     <button onclick="copyReport()">📋 Copy Report to Clipboard</button>
                 """, unsafe_allow_html=True)
         except Exception as e:
