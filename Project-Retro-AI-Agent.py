@@ -175,15 +175,19 @@ if uploaded_file:
                 st.markdown("""
                     <script>
                         function copyReport() {
-                        const text = document.getElementById('ai_report').value;
-                        navigator.clipboard.writeText(text).then(function() {
-                            alert('Report copied to clipboard!');}, 
-                        function(err) {
-                            alert('Failed to copy text: ', err);
+                            const text = document.querySelector('textarea#ai_report')?.value;
+                            if (!text) {
+                                alert('No report found to copy.');
+                                return;
+                            }
+                            navigator.clipboard.writeText(text).then(function() {
+                                alert('Report copied to clipboard!');
+                            }, function(err) {
+                                alert('Failed to copy text: ' + err);
                             });
                         }
                     </script>
-                        <button onclick="copyReport()">📋 Copy Report to Clipboard</button>
+                    <button onclick=\"copyReport()\">📋 Copy Report to Clipboard</button>
                     """, unsafe_allow_html=True)
             except Exception as e:
                 st.error(f"Model consultation error: {e}")
