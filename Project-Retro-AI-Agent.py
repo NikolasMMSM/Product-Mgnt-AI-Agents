@@ -69,6 +69,18 @@ if uploaded_file:
         focus = "Your task is to generate an executive summary of the delivery, highlighting strengths, bottlenecks, and opportunities for improvement."
 
     # Prompt construction
+    key_metrics_text = f"""
+Key Metrics:
+- Total items (raw): {len(pd.read_csv(uploaded_file))}
+- Items considered after filtering: {total_items}
+- Tasks without Story Point estimate: {tasks_without_estimate}
+- Average execution time: {avg_exec_time} days
+- Max execution time: {max_exec_time} days
+- Min execution time: {min_exec_time} days
+- Std deviation: {exec_time_std} days
+- Contributor with highest variability: {top_variability_contributor} ({top_variability_value} days)
+"""
+
     prompt = f"""
 You are a product analyst. Below are the execution data of a digital project. {focus}
 Also take into account the Story Points scale used to estimate task effort.
@@ -85,7 +97,7 @@ Project Data:
 - Contributor with highest time variability: {top_variability_contributor} ({top_variability_value} days)
 - Top contributors:\n  """ + "\n  ".join(top_contributors) + """
 
-Story Points Guide (Fibonacci Scale with end at number 21):
+Story Points Guide (Fibonacci Scale):
 - 1: Extra small – One-line change or similar work, can be done in 1 hour.
 - 2: Small – Developer understands the task, requires small problem-solving.
 - 3: Average – Developer knows what to do, no research required.
@@ -105,8 +117,9 @@ Instructions:
 - Respond in a professional, executive tone.
 """
 
-    if st.button("🔍 Generate AI Analysis"):
-        with st.spinner("Consulting the virtual analyst..."):
+
+    if st.button("🔍 Generate Report"):
+        with st.spinner("AI is thinking..."):
             try:
                 client = openai.OpenAI()
                 response = client.chat.completions.create(
