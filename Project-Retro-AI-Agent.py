@@ -102,10 +102,8 @@ instructions = scope_config[scope_key]["instructions"]
 
 if st.button("🔍 Generate AI Analysis"):
     if scope_key == "sprint_review" and not sprint_number:
-        st.warning(
-            "Please enter a Sprint Number before generating the Sprint Review analysis."
-            )
-        st.stop()
+        st.warning("Please enter a Sprint Number before generating the Sprint Review analysis.")
+        # st.stop()
         prompt = f"""
               ## {key_metrics_text.strip()}
 
