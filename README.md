@@ -60,7 +60,7 @@ You will be prompted to select one of the following project statuses:
 
 ## ⚠️ Disclaimer
 
-This app uses the GPT-4 API from OpenAI. Please keep your API key secure and monitor your usage according to your OpenAI plan.
+This app uses the GPT-3.5-turbo API from OpenAI. Please keep your API key secure and monitor your usage according to your OpenAI plan.
 
 ---
 
