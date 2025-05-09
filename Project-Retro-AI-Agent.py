@@ -44,8 +44,9 @@ uploaded_file = st.file_uploader("📁 Upload your project CSV file", type="csv"
 if uploaded_file:
     raw_df = pd.read_csv(uploaded_file)
     df = raw_df.copy()
-
-    # Filer per sprint if applicable
+    
+    # Filter per sprint if applicable
+    focus = scope_config[scope_key]["prompt"]
     if scope_key == "sprint_review" and sprint_number:
         sprint_col = [col for col in df.columns if 'sprint' in col.lower()]
         if sprint_col:
@@ -93,8 +94,6 @@ if uploaded_file:
         - Std deviation: {exec_time_std} days
         - Contributor with highest variability: {top_variability_contributor} ({top_variability_value} days)
         """
-
-    focus = scope_config[scope_key]["prompt"]
 
 if scope_key == "sprint_review" and sprint_number:
     focus += f"\nThis is Sprint {sprint_number}. Focus your analysis specifically on tasks completed during this sprint."
