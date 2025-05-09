@@ -22,7 +22,8 @@ status_options = {"Initial": "initial", "In Progress": "in_progress", "Completed
 project_status = st.selectbox("📌 What is the current project status?", list(status_options.keys()))
 
 if uploaded_file:
-    df = pd.read_csv(uploaded_file)
+    raw_df = pd.read_csv(uploaded_file)
+    df = raw_df.copy()
 
     # Date conversion and execution time calculation
     df['Activated Date'] = pd.to_datetime(df['Activated Date'], errors='coerce')
@@ -71,7 +72,7 @@ if uploaded_file:
     # Prompt construction
     key_metrics_text = f"""
 Key Metrics:
-- Total items (raw): {len(pd.read_csv(uploaded_file))}
+- Total items (raw): {len(raw_df)}
 - Items considered after filtering: {total_items}
 - Tasks without Story Point estimate: {tasks_without_estimate}
 - Average execution time: {avg_exec_time} days
@@ -105,6 +106,7 @@ Story Points Guide (Fibonacci Scale):
 - 8: Extra Large – Time-consuming, needs research and possibly multiple developers.
 - 13: Warning – Complex, many unknowns, likely won't fit in one sprint.
 - 21: Hazard – Very complex, unclear how to start, many assumptions and unknowns.
+(Note: 21 is the upper limit of the story point scale used in this analysis.)
 
 Instructions:
 - Interpret whether delivery time is compatible with the estimated complexity.
