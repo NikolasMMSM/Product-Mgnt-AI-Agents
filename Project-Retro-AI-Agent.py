@@ -174,8 +174,14 @@ if uploaded_file:
                     
                 st.markdown("""
                     <script>
+                        // Atribui manualmente o ID após renderização
+                        const textarea = window.parent.document.querySelector('textarea[data-testid="stTextArea"]');
+                        if (textarea) {
+                            textarea.id = "ai_report";
+                        }
+
                         function copyReport() {
-                            const text = document.querySelector('textarea#ai_report')?.value;
+                            const text = document.getElementById("ai_report")?.value;
                             if (!text) {
                                 alert('No report found to copy.');
                                 return;
@@ -188,6 +194,6 @@ if uploaded_file:
                         }
                     </script>
                     <button onclick=\"copyReport()\">📋 Copy Report to Clipboard</button>
-                    """, unsafe_allow_html=True)
+                """, unsafe_allow_html=True)
             except Exception as e:
                 st.error(f"Model consultation error: {e}")
