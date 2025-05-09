@@ -60,7 +60,19 @@ if uploaded_file:
     for _, row in by_assignee.iterrows():
         top_contributors.append(f"- {row['Assigned To']}: {int(row['Items_Completed'])} items, {int(row['Total_Story_Points'])} points, avg. {round(row['Avg_Execution_Time'], 1)} days")
 
-        st.code(key_metrics_text.strip(), language='markdown')
+    # Key Metrics Text
+    key_metrics_text = f"""
+Key Metrics:
+- Total items (raw): {len(raw_df)}
+- Items considered after filtering: {total_items}
+- Tasks without Story Point estimate: {tasks_without_estimate}
+- Average execution time: {avg_exec_time} days
+- Max execution time: {max_exec_time} days
+- Min execution time: {min_exec_time} days
+- Std deviation: {exec_time_std} days
+- Contributor with highest variability: {top_variability_contributor} ({top_variability_value} days)
+"""
+    st.code(key_metrics_text.strip(), language='markdown')
 
     # Conditional prompt based on status
     analysis_status = status_options[project_status]
@@ -73,18 +85,6 @@ if uploaded_file:
         focus = "Your task is to generate an executive summary of the delivery, highlighting strengths, bottlenecks, and opportunities for improvement."
 
     # Prompt construction
-    key_metrics_text = f"""
-Key Metrics:
-- Total items (raw): {len(raw_df)}
-- Items considered after filtering: {total_items}
-- Tasks without Story Point estimate: {tasks_without_estimate}
-- Average execution time: {avg_exec_time} days
-- Max execution time: {max_exec_time} days
-- Min execution time: {min_exec_time} days
-- Std deviation: {exec_time_std} days
-- Contributor with highest variability: {top_variability_contributor} ({top_variability_value} days)
-"""
-
     prompt = f"""
 ## {key_metrics_text.strip()}
 
@@ -122,7 +122,6 @@ Instructions:
 - Suggest improvement points for future sprints.
 - Highlight strong individual contributions and possible performance issues.
 - Respond in a professional, executive tone.
-- Always return the Key Metrics presented in this prompt in your response
 - Split your answer into topics
 """
 
