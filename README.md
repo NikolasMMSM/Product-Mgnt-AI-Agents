@@ -1,4 +1,4 @@
-# 🤖 AI Agent – Agile Project Analysis
+# 🤖 AI Agent – Agile Project Analysis For Project/Product Managers
 
 This project is a Streamlit-based AI assistant that analyzes agile project data exported from Azure DevOps. The agent acts as a **digital consultant**, capable of evaluating project planning, in-progress performance, or retrospective insights — depending on the current status of the project.
 
@@ -64,5 +64,4 @@ This app uses the GPT-3.5-turbo API from OpenAI. Please keep your API key secure
 
 ---
 
-Agent by Nikolas Moreira
-"Alone, we go fast. Together, we go further"
+Made by Nikolas Moreira
