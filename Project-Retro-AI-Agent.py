@@ -187,7 +187,7 @@ Key Metrics:
                 st.markdown("### 📌 Key Metrics")
                 st.code(key_metrics_text.strip(), language='markdown')
                 st.markdown("### 📊 Analysis Result")
-                st.text_area(value=analysis, height=400, key="ai_report")
+                st.text_area("", value=analysis, height=400, key="ai_report")
                 st.markdown("""
                     <script>
                     function copyReport() {
