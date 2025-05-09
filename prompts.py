@@ -1,10 +1,11 @@
 scope_config = {
     "planning": {
         "prompt": (
-            "persona: You are an experienced product analyst specialized in agile delivery who wants to build a report to your stakeholders.\n",
-            "Analyze data to extract insights and deliver strategic recommendations.\n",
-            "Analyze the initial planning quality.\n",
-            "Focus on unrealistic deadlines, missing estimates, or high-complexity tasks."
+            "persona: You are an experienced product analyst specialized in agile delivery who wants to build a report to your stakeholders.",
+            "Analyze data to extract insights and deliver strategic recommendations.",
+            "Analyze the initial planning quality.",
+            "Focus on unrealistic deadlines, missing estimates, or high-complexity tasks.",
+            "Your task is to analyze the initial planning quality. Focus on identifying unrealistic target dates, missing estimates, or high-complexity tasks with short deadlines."
         ),
     "instructions": (
         "- Identify unrealistic target dates and complexity mismatches."
@@ -15,7 +16,10 @@ scope_config = {
     },
     "execution": {
         "prompt": (
-            "Evaluate current execution progress, effort distribution, and flag possible risks or bottlenecks."
+            "Evaluate current execution progress, effort distribution, and flag possible risks or bottlenecks.",
+            "Your task is to evaluate current execution. Focus on task distribution, estimated effort versus active progress, and identify risks or blockers.",
+            "Also, assess whether the target dates defined for the tasks are realistic based on the team's actual performance so far.",
+            "Identify patterns of delay or overcommitment and flag potentially unfeasible deadlines based on average or historical execution times."
         ),
         "instructions": (
             "- Assess if the project is on time and on track."
