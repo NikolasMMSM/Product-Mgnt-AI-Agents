@@ -65,7 +65,7 @@ if uploaded_file:
     if analysis_status == "initial":
         focus = "Your task is to analyze the initial planning quality. Focus on identifying unrealistic target dates, missing estimates, or high-complexity tasks with short deadlines."
     elif analysis_status == "in_progress":
-        focus = "Your task is to evaluate current execution. Focus on task distribution, estimated effort versus active progress, and identify risks or blockers."
+        focus = "Your task is to evaluate current execution. Focus on task distribution, estimated effort versus active progress, unrealistic target dates based on the job progress, missing estimates, bottlenecks, analyze contributor's performance and identify risks, blockers."
     else:
         focus = "Your task is to generate an executive summary of the delivery, highlighting strengths, bottlenecks, and opportunities for improvement."
 
@@ -83,6 +83,8 @@ Key Metrics:
 """
 
     prompt = f"""
+{key_metrics_text}
+
 You are a product analyst. Below are the execution data of a digital project. {focus}
 Also take into account the Story Points scale used to estimate task effort.
 
@@ -117,6 +119,7 @@ Instructions:
 - Suggest improvement points for future sprints.
 - Highlight strong individual contributions and possible performance issues.
 - Respond in a professional, executive tone.
+- Always include the key metrics in your response
 """
 
 
