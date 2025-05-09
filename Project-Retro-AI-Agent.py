@@ -90,10 +90,17 @@ Key Metrics:
         "sprint_review": (
             "Generate a Sprint Review summary based on Scrum principles.\n"
             "Highlight what was completed versus planned, demo-ready features, feedback received, and alignment with sprint goals.\n"
-          Emphasize team achievements, stakeholder reactions, and areas for continuous improvement.",
-        "delivery": "Generate a retrospective summary with highlights, bottlenecks, and improvement suggestions.",
-        "risk": "Identify potential risks based on historical execution patterns, outliers, or estimation gaps.",
-        "team": "Assess individual contributor performance, consistency, and suggest improvements or mentoring."
+            "Emphasize team achievements, stakeholder reactions, and areas for continuous improvement."
+        ),
+        "delivery": (
+            "Generate a retrospective summary with highlights, bottlenecks, and improvement suggestions."
+        ),
+        "risk": (
+            "Identify potential risks based on historical execution patterns, outliers, or estimation gaps."
+        ),
+        "team": (
+            "Assess individual contributor performance, consistency, and suggest improvements or mentoring."
+        )
     }
 
     scope_instructions = {
