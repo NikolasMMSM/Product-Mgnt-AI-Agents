@@ -80,59 +80,94 @@ Key Metrics:
 """
 
     scope_prompts = {
-        "planning": "Analyze the initial planning quality. Focus on unrealistic deadlines, missing estimates, or high-complexity tasks.",
-        "execution": "Evaluate current execution progress, effort distribution, and flag possible risks or bottlenecks.",
-        "sprint_review": "Generate a Sprint Review summary based on Scrum principles. Highlight what was completed versus planned, demo-ready features, feedback received, and alignment with sprint goals. Emphasize team achievements, stakeholder reactions, and areas for continuous improvement.",
+        "planning": (
+            "- Analyze the initial planning quality. \n"
+            "- Focus on unrealistic deadlines, missing estimates, or high-complexity tasks."
+        ),
+        "execution": (
+            "- Evaluate current execution progress, effort distribution, and flag possible risks or bottlenecks."
+        ),
+        "sprint_review": (
+            "Generate a Sprint Review summary based on Scrum principles.\n"
+            "Highlight what was completed versus planned, demo-ready features, feedback received, and alignment with sprint goals.\n"
+          Emphasize team achievements, stakeholder reactions, and areas for continuous improvement.",
         "delivery": "Generate a retrospective summary with highlights, bottlenecks, and improvement suggestions.",
         "risk": "Identify potential risks based on historical execution patterns, outliers, or estimation gaps.",
         "team": "Assess individual contributor performance, consistency, and suggest improvements or mentoring."
     }
 
     scope_instructions = {
-        "planning": "- Identify unrealistic target dates and complexity mismatches.\n- Assess missing estimates and story point distribution.\n- Highlight potential planning risks and scope issues.",
-        "execution": "- Assess if the project is on time and on track.\n- Interpret whether delivery time is compatible with the estimated complexity.\n- Identify estimation mistakes and execution risks.\n- Highlight contributors with inconsistent performance.",
-        "sprint_review": "- Compare what was planned vs. completed in the sprint.\n- Highlight demo-ready items and partial/incomplete tasks.\n- Mention stakeholder feedback and sprint goal alignment.\n- Emphasize positive highlights and team engagement.",
-        "delivery": "- Generate an executive summary.\n- Highlight strengths, bottlenecks, and performance patterns.\n- Suggest areas for improvement in future deliveries.",
-        "risk": "- Detect outliers and execution anomalies.\n- Highlight areas where estimates and real effort diverged.\n- Suggest early mitigation strategies.",
-        "team": "- Identify contributors with inconsistent delivery speed.\n- Suggest mentoring or workload balance actions.\n- Highlight strong contributions."
+        "planning": (
+            "- Identify unrealistic target dates and complexity mismatches.\n"
+            "- Assess missing estimates and story point distribution.\n"
+            "- Highlight potential planning risks and scope issues."
+        ),
+        "execution": (
+            "- Assess if the project is on time and on track.\n"
+            "- Interpret whether delivery time is compatible with the estimated complexity.\n"
+            "- Identify estimation mistakes and execution risks.\n"
+            "- Highlight contributors with inconsistent performance."
+        ),
+        "sprint_review": (
+            "- Compare what was planned vs. completed in the sprint.\n"
+            "- Highlight demo-ready items and partial/incomplete tasks.\n"
+            "- Mention stakeholder feedback and sprint goal alignment.\n"
+            "- Emphasize positive highlights and team engagement."
+        ),
+        "delivery": (
+            "- Generate an executive summary.\n"
+            "- Highlight strengths, bottlenecks, and performance patterns.\n"
+            "- Suggest areas for improvement in future deliveries."
+        ),
+        "risk": (
+            "- Detect outliers and execution anomalies.\n"
+            "- Highlight areas where estimates and real effort diverged.\n"
+            "- Suggest early mitigation strategies."
+        ),
+        "team": (
+            "- Identify contributors with inconsistent delivery speed.\n"
+            "- Suggest mentoring or workload balance actions.\n"
+            "- Highlight strong contributions."
+        )
     }
 
     focus = scope_prompts.get(scope_key, "Provide a general analysis of the project.")
-    instructions = scope_instructions.get(scope_key, "- Generate a professional, executive tone report.\n- Split your answer into topics.\n- Provide improvement suggestions.")
+    instructions = scope_instructions.get(scope_key, "- Generate a professional, executive tone report.\n- Split your answer into topics.\n - Provide improvement suggestions.")
 
     if st.button("🔍 Generate AI Analysis"):
         with st.spinner("AI is thinking..."):
             prompt = f"""
-## {key_metrics_text.strip()}
+              ## {key_metrics_text.strip()}
 
-You are a product analyst. Below are the execution data of a digital project. {focus}
-Also take into account the Story Points scale used to estimate task effort.
+              You are a product specialist. Below are the execution data of a digital project. 
+              {focus}
+              Also, take into account the Story Points scale used to estimate task effort.
 
-Project Data:
-- Total items: {total_items}
-- Total Story Points: {total_story_points}
-- Average Story Points per item: {avg_story_points}
-- Average execution time per item: {avg_exec_time} days
-- Maximum execution time for a single item: {max_exec_time} days
-- Minimum execution time for a single item: {min_exec_time} days
-- Standard deviation of execution time: {exec_time_std} days
-- Tasks without Story Point estimate: {tasks_without_estimate}
-- Contributor with highest time variability: {top_variability_contributor} ({top_variability_value} days)
-- Top contributors:\n  """ + "\n  ".join(top_contributors) + f"""
+              Project Data:
+              - Total items: {total_items}
+              - Total Story Points: {total_story_points}
+              - Average Story Points per item: {avg_story_points}
+              - Average execution time per item: {avg_exec_time} days
+              - Maximum execution time for a single item: {max_exec_time} days
+              - Minimum execution time for a single item: {min_exec_time} days
+              - Standard deviation of execution time: {exec_time_std} days
+              - Tasks without Story Point estimate: {tasks_without_estimate}
+              - Contributor with highest time variability: {top_variability_contributor} ({top_variability_value} days)
+              - Top contributors:\n  """ + "\n  ".join(top_contributors) + f"""
 
-Story Points Guide (Fibonacci Scale):
-- 1: Extra small – One-line change or similar work, can be done in 1 hour.
-- 2: Small – Developer understands the task, requires small problem-solving.
-- 3: Average – Developer knows what to do, no research required.
-- 5: Large – Task is not very common, may require help or some research.
-- 8: Extra Large – Time-consuming, needs research and possibly multiple developers.
-- 13: Warning – Complex, many unknowns, likely won't fit in one sprint.
-- 21: Hazard – Very complex, unclear how to start, many assumptions and unknowns.
-(Note: 21 is the upper limit of the story point scale used in this analysis.)
+              Story Points Guide (Fibonacci Scale):
+              - 1: Extra small – One-line change or similar work, can be done in 1 hour.
+              - 2: Small – Developer understands the task, requires small problem-solving.
+              - 3: Average – Developer knows what to do, no research required.
+              - 5: Large – Task is not very common, may require help or some research.
+              - 8: Extra Large – Time-consuming, needs research and possibly multiple developers.
+              - 13: Warning – Complex, many unknowns, likely won't fit in one sprint.
+              - 21: Hazard – Very complex, unclear how to start, many assumptions and unknowns.
+              (Note: 21 is the upper limit of the story point scale used in this analysis.)
 
-Instructions:
-{instructions}
-"""
+              Instructions:
+              {instructions}
+              """
 
             try:
                 client = openai.OpenAI()
