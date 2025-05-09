@@ -6,33 +6,44 @@ from datetime import datetime
 from dotenv import load_dotenv
 
 # Load environment variables
-# If you're deploying this code to Streamlit Cloud, you may will need to comment line 11
-# and define OPENAI_API_KEY directly in the app's Secrets Manager instead.
-# load_dotenv(dotenv_path="envconfig.env")
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 st.set_page_config(page_title="AI Agent - Project Consultant", layout="wide")
+st.markdown("""
+    <style>
+        .block-container {
+            max-width: 900px;
+            margin: auto;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 st.title("🤖 AI Agent for Digital Project Analysis")
 
-# Project status selection
-status_options = {"Initial": "initial", "In Progress": "in_progress", "Completed": "completed"}
-project_status = st.selectbox("📌 What is the current project status?", list(status_options.keys()))
+# Scope selector
+scope_options = {
+    "Initial Planning Quality": "planning",
+    "Execution Monitoring": "execution",
+    "Sprint Review": "sprint_review",
+    "Delivery Summary": "delivery",
+    "Risk Analysis": "risk",
+    "Team Performance": "team"
+}
+selected_scope = st.selectbox("📌 What aspect of the project do you want to analyze?", list(scope_options.keys()))
+scope_key = scope_options[selected_scope]
 
 # File upload
 uploaded_file = st.file_uploader("📁 Upload your project CSV file", type="csv")
 
 if uploaded_file:
-    st.markdown("### 📌 Key Metrics Preview")
     raw_df = pd.read_csv(uploaded_file)
     df = raw_df.copy()
 
-    # Date conversion and execution time calculation
     df['Activated Date'] = pd.to_datetime(df['Activated Date'], errors='coerce')
     df['Closed Date'] = pd.to_datetime(df['Closed Date'], errors='coerce')
     df = df.dropna(subset=['Activated Date'])
     df['Execution Time (days)'] = (df['Closed Date'] - df['Activated Date']).dt.days
 
-    # Core metrics
     total_items = len(df)
     total_story_points = df['Story Points'].sum()
     avg_story_points = round(df['Story Points'].mean(), 2)
@@ -41,15 +52,11 @@ if uploaded_file:
     min_exec_time = round(df['Execution Time (days)'].min(), 2) if 'Execution Time (days)' in df else 0
     exec_time_std = round(df['Execution Time (days)'].std(), 2) if 'Execution Time (days)' in df else 0
 
-    # Count tasks with no estimate
     tasks_without_estimate = df['Story Points'].isna().sum()
-
-    # Contributor with highest execution time variation
     contributor_variability = df.groupby('Assigned To')['Execution Time (days)'].std().sort_values(ascending=False)
     top_variability_contributor = contributor_variability.idxmax() if not contributor_variability.empty else "N/A"
     top_variability_value = round(contributor_variability.max(), 2) if not contributor_variability.empty else 0
 
-    # Top contributors
     by_assignee = df.groupby('Assigned To').agg(
         Items_Completed=('Title', 'count'),
         Total_Story_Points=('Story Points', 'sum'),
@@ -60,7 +67,6 @@ if uploaded_file:
     for _, row in by_assignee.iterrows():
         top_contributors.append(f"- {row['Assigned To']}: {int(row['Items_Completed'])} items, {int(row['Total_Story_Points'])} points, avg. {round(row['Avg_Execution_Time'], 1)} days")
 
-    # Key Metrics Text
     key_metrics_text = f"""
 Key Metrics:
 - Total items (raw): {len(raw_df)}
@@ -72,21 +78,31 @@ Key Metrics:
 - Std deviation: {exec_time_std} days
 - Contributor with highest variability: {top_variability_contributor} ({top_variability_value} days)
 """
-    st.code(key_metrics_text.strip(), language='markdown')
 
-    # Conditional prompt based on status
-    analysis_status = status_options[project_status]
+    scope_prompts = {
+        "planning": "Analyze the initial planning quality. Focus on unrealistic deadlines, missing estimates, or high-complexity tasks.",
+        "execution": "Evaluate current execution progress, effort distribution, and flag possible risks or bottlenecks.",
+        "sprint_review": "Generate a Sprint Review summary based on Scrum principles. Highlight what was completed versus planned, demo-ready features, feedback received, and alignment with sprint goals. Emphasize team achievements, stakeholder reactions, and areas for continuous improvement.",
+        "delivery": "Generate a retrospective summary with highlights, bottlenecks, and improvement suggestions.",
+        "risk": "Identify potential risks based on historical execution patterns, outliers, or estimation gaps.",
+        "team": "Assess individual contributor performance, consistency, and suggest improvements or mentoring."
+    }
 
-    if analysis_status == "initial":
-        focus = "Your task is to analyze the initial planning quality. Focus on identifying unrealistic target dates, missing estimates, or high-complexity tasks with short deadlines."
-    elif analysis_status == "in_progress":
-        focus = "Your task is to evaluate current execution. Focus on task distribution, estimated effort versus active progress, and identify risks or blockers. Also, assess whether the target dates defined for the tasks are realistic based on the team's actual performance so far. Identify patterns of delay or overcommitment and flag potentially unfeasible deadlines based on average or historical execution times."
-    else:
-        focus = "Your task is to generate an executive summary of the delivery, highlighting strengths, bottlenecks, and opportunities for improvement. Evaluate performance per contributor and identify tasks where there were divergences between planned estimates and actual execution times."
-        
+    scope_instructions = {
+        "planning": "- Identify unrealistic target dates and complexity mismatches.\n- Assess missing estimates and story point distribution.\n- Highlight potential planning risks and scope issues.",
+        "execution": "- Assess if the project is on time and on track.\n- Interpret whether delivery time is compatible with the estimated complexity.\n- Identify estimation mistakes and execution risks.\n- Highlight contributors with inconsistent performance.",
+        "sprint_review": "- Compare what was planned vs. completed in the sprint.\n- Highlight demo-ready items and partial/incomplete tasks.\n- Mention stakeholder feedback and sprint goal alignment.\n- Emphasize positive highlights and team engagement.",
+        "delivery": "- Generate an executive summary.\n- Highlight strengths, bottlenecks, and performance patterns.\n- Suggest areas for improvement in future deliveries.",
+        "risk": "- Detect outliers and execution anomalies.\n- Highlight areas where estimates and real effort diverged.\n- Suggest early mitigation strategies.",
+        "team": "- Identify contributors with inconsistent delivery speed.\n- Suggest mentoring or workload balance actions.\n- Highlight strong contributions."
+    }
 
-    # Prompt construction
-    prompt = f"""
+    focus = scope_prompts.get(scope_key, "Provide a general analysis of the project.")
+    instructions = scope_instructions.get(scope_key, "- Generate a professional, executive tone report.\n- Split your answer into topics.\n- Provide improvement suggestions.")
+
+    if st.button("🔍 Generate AI Analysis"):
+        with st.spinner("AI is thinking..."):
+            prompt = f"""
 ## {key_metrics_text.strip()}
 
 You are a product analyst. Below are the execution data of a digital project. {focus}
@@ -102,7 +118,7 @@ Project Data:
 - Standard deviation of execution time: {exec_time_std} days
 - Tasks without Story Point estimate: {tasks_without_estimate}
 - Contributor with highest time variability: {top_variability_contributor} ({top_variability_value} days)
-- Top contributors:\n  """ + "\n  ".join(top_contributors) + """
+- Top contributors:\n  """ + "\n  ".join(top_contributors) + f"""
 
 Story Points Guide (Fibonacci Scale):
 - 1: Extra small – One-line change or similar work, can be done in 1 hour.
@@ -115,39 +131,32 @@ Story Points Guide (Fibonacci Scale):
 (Note: 21 is the upper limit of the story point scale used in this analysis.)
 
 Instructions:
-- Generate a professional, executive tone report.
-- Split your answer into topics
-- Assess if the project is on time and on track.
-- Interpret whether delivery time is compatible with the estimated complexity.
-- Identify potential estimation mistakes.
-- Evaluate the variability in execution time to detect inconsistencies or outliers.
-- Highlight the number of tasks with no estimate and suggest if estimation hygiene is an issue.
-- Identify contributors with inconsistent delivery speed and suggest mentoring or scope review.
-- Highlight strong individual contributions and possible performance issues.
-- Suggest improvement points for future sprints.
+{instructions}
 """
 
-    if st.button("🔍 Generate AI Analysis"):
-        with st.spinner("AI is thinking..."):
+            st.markdown("### 📌 Key Metrics Preview")
+            st.code(key_metrics_text.strip(), language='markdown')
+
             try:
                 client = openai.OpenAI()
-             #   try:
-             #       response = client.chat.completions.create(
-             #           model="gpt-4",
-             #           messages=[{"role": "user", "content": prompt}],
-             #           temperature=0.4
-             #       )
-             #   except openai.BadRequestError as err:
-             #       if "model" in str(err) and "gpt-4" in str(err):
                 response = client.chat.completions.create(
                     model="gpt-3.5-turbo",
-                    messages=[{"role": "user", "content": prompt}],                        
+                    messages=[{"role": "user", "content": prompt}],
                     temperature=0.4
                 )
-              #      else:
-              #          raise err
                 analysis = response.choices[0].message.content.strip()
                 st.markdown("### 📊 Analysis Result")
-                st.write(analysis)
+                st.text_area("📝 Full Report", value=analysis, height=400, key="ai_report")
+                st.markdown("""
+                    <button onclick="navigator.clipboard.writeText(document.getElementById('ai-report').value)">
+                        📋 Copy Report to Clipboard
+                    </button>
+                    <script>
+                    const textarea = document.querySelector('textarea');
+                    if (textarea) {
+                        textarea.id = "ai-report";
+                    }
+                    </script>
+                """, unsafe_allow_html=True)
             except Exception as e:
                 st.error(f"Model consultation error: {e}")
