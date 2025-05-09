@@ -134,9 +134,6 @@ Instructions:
 {instructions}
 """
 
-            st.markdown("### 📌 Key Metrics Preview")
-            st.code(key_metrics_text.strip(), language='markdown')
-
             try:
                 client = openai.OpenAI()
                 response = client.chat.completions.create(
@@ -145,18 +142,22 @@ Instructions:
                     temperature=0.4
                 )
                 analysis = response.choices[0].message.content.strip()
+                st.markdown("### 📌 Key Metrics")
+                st.code(key_metrics_text.strip(), width=900, language='markdown')
                 st.markdown("### 📊 Analysis Result")
-                st.text_area("📝 Full Report", value=analysis, height=400, key="ai_report")
+                st.text_area(value=analysis, height=400, key="ai_report")
                 st.markdown("""
-                    <button onclick="navigator.clipboard.writeText(document.getElementById('ai-report').value)">
-                        📋 Copy Report to Clipboard
-                    </button>
                     <script>
-                    const textarea = document.querySelector('textarea');
-                    if (textarea) {
-                        textarea.id = "ai-report";
+                    function copyReport() {
+                      const text = document.getElementById('ai_report').value;
+                      navigator.clipboard.writeText(text).then(function() {
+                        alert('Report copied to clipboard!');}, 
+                      function(err) {
+                          alert('Failed to copy text: ', err);
+                      });
                     }
                     </script>
-                """, unsafe_allow_html=True)
+                    <button onclick="copyReport()">📋 Copy Report to Clipboard</button>
+                """, unsafe_allow_html=True
             except Exception as e:
                 st.error(f"Model consultation error: {e}")
