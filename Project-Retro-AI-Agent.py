@@ -80,9 +80,10 @@ Key Metrics:
     if analysis_status == "initial":
         focus = "Your task is to analyze the initial planning quality. Focus on identifying unrealistic target dates, missing estimates, or high-complexity tasks with short deadlines."
     elif analysis_status == "in_progress":
-        focus = "Your task is to evaluate current execution. Focus on task distribution, estimated effort versus active progress, and identify risks or blockers."
+        focus = "Your task is to evaluate current execution. Focus on task distribution, estimated effort versus active progress, and identify risks or blockers. Also, assess whether the target dates defined for the tasks are realistic based on the team's actual performance so far. Identify patterns of delay or overcommitment and flag potentially unfeasible deadlines based on average or historical execution times."
     else:
-        focus = "Your task is to generate an executive summary of the delivery, highlighting strengths, bottlenecks, and opportunities for improvement."
+        focus = "Your task is to generate an executive summary of the delivery, highlighting strengths, bottlenecks, and opportunities for improvement. Evaluate performance per contributor and identify tasks where there were divergences between planned estimates and actual execution times."
+        
 
     # Prompt construction
     prompt = f"""
