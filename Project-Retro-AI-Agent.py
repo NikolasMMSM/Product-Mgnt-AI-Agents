@@ -35,6 +35,7 @@ scope_key = scope_options[selected_scope]
 
 # Sprint number input (only for Sprint Review scope)
 sprint_number = None
+focus = scope_config[scope_key]["prompt"]
 if scope_key == "sprint_review":
     sprint_number = st.text_input("📅 Enter the Sprint Number you are reviewing:")
 
@@ -46,7 +47,6 @@ if uploaded_file:
     df = raw_df.copy()
     
     # Filter per sprint if applicable
-    focus = scope_config[scope_key]["prompt"]
     if scope_key == "sprint_review" and sprint_number:
         sprint_col = [col for col in df.columns if 'sprint' in col.lower()]
         if sprint_col:
