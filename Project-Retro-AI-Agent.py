@@ -115,15 +115,16 @@ Story Points Guide (Fibonacci Scale):
 (Note: 21 is the upper limit of the story point scale used in this analysis.)
 
 Instructions:
+- Generate a professional, executive tone report.
+- Split your answer into topics
+- Assess if the project is on time and on track.
 - Interpret whether delivery time is compatible with the estimated complexity.
 - Identify potential estimation mistakes.
 - Evaluate the variability in execution time to detect inconsistencies or outliers.
 - Highlight the number of tasks with no estimate and suggest if estimation hygiene is an issue.
 - Identify contributors with inconsistent delivery speed and suggest mentoring or scope review.
-- Suggest improvement points for future sprints.
 - Highlight strong individual contributions and possible performance issues.
-- Respond in a professional, executive tone.
-- Split your answer into topics
+- Suggest improvement points for future sprints.
 """
 
     if st.button("🔍 Generate AI Analysis"):
