@@ -178,7 +178,7 @@ Key Metrics:
                 )
                 analysis = response.choices[0].message.content.strip()
                 st.markdown("### 📌 Key Metrics")
-                st.code(key_metrics_text.strip(), width=900, language='markdown')
+                st.code(key_metrics_text.strip(), language='markdown')
                 st.markdown("### 📊 Analysis Result")
                 st.text_area(value=analysis, height=400, key="ai_report")
                 st.markdown("""
