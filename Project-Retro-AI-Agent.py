@@ -75,7 +75,7 @@ Instructions:
                 client = openai.OpenAI()
 
                 response = client.chat.completions.create(
-                    model="gpt-4",
+                    model="4o-mini",
                     messages=[{"role": "user", "content": prompt}],
                     temperature=0.4
                     )
