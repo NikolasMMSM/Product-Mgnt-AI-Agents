@@ -132,13 +132,13 @@ Instructions:
             try:
                 client = openai.OpenAI()
                 try:
-                    response = client.chat.completions.create(
-                        model="gpt-4",
-                        messages=[{"role": "user", "content": prompt}],
-                        temperature=0.4
-                    )
-                except openai.BadRequestError as err:
-                    if "model" in str(err) and "gpt-4" in str(err):
+                #    response = client.chat.completions.create(
+                #        model="gpt-4",
+                #        messages=[{"role": "user", "content": prompt}],
+                #        temperature=0.4
+                #    )
+                #except openai.BadRequestError as err:
+                #    if "model" in str(err) and "gpt-4" in str(err):
                         response = client.chat.completions.create(
                             model="gpt-3.5-turbo",
                             messages=[{"role": "user", "content": prompt}],
