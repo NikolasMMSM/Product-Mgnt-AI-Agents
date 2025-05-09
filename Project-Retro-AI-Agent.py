@@ -14,12 +14,12 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 st.set_page_config(page_title="AI Agent - Project Consultant", layout="wide")
 st.title("🤖 AI Agent for Digital Project Analysis")
 
-# File upload
-uploaded_file = st.file_uploader("📁 Upload your project CSV file", type="csv")
-
 # Project status selection
 status_options = {"Initial": "initial", "In Progress": "in_progress", "Completed": "completed"}
 project_status = st.selectbox("📌 What is the current project status?", list(status_options.keys()))
+
+# File upload
+uploaded_file = st.file_uploader("📁 Upload your project CSV file", type="csv")
 
 if uploaded_file:
     st.markdown("### 📌 Key Metrics Preview")
