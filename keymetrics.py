@@ -41,14 +41,14 @@ def process_key_metrics(df, raw_df, scope_key, sprint_number):
 def generate_key_metrics(raw_df, df, sprint_number, total_items, tasks_without_estimate, avg_exec_time, max_exec_time, min_exec_time, exec_time_std, top_variability_contributor, top_variability_value, scope_key):
     sprint_info_line = f"- Sprint Number: {sprint_number}" if scope_key == "sprint_review" and sprint_number else ""
     return f"""
-Key Metrics:
-{sprint_info_line}
-- Total items (raw): {len(raw_df)}
-- Items considered after filtering: {total_items}
-- Tasks without Story Point estimate: {tasks_without_estimate}
-- Average execution time: {avg_exec_time} days
-- Max execution time: {max_exec_time} days
-- Min execution time: {min_exec_time} days
-- Std deviation: {exec_time_std} days
-- Contributor with highest variability: {top_variability_contributor} ({top_variability_value} days)
-"""
+        Key Metrics:
+        {sprint_info_line}
+        - Total items (raw): {len(raw_df)}
+        - Items considered after filtering: {total_items}
+        - Tasks without Story Point estimate: {tasks_without_estimate}
+        - Average execution time: {avg_exec_time} days
+        - Max execution time: {max_exec_time} days
+        - Min execution time: {min_exec_time} days
+        - Std deviation: {exec_time_std} days
+        - Contributor with highest variability: {top_variability_contributor} ({top_variability_value} days)
+        """
