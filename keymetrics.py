@@ -1,6 +1,7 @@
 import pandas as pd
 
 def process_key_metrics(df, raw_df, scope_key, sprint_number):
+    
     df['Activated Date'] = pd.to_datetime(df['Activated Date'], errors='coerce')
     df['Closed Date'] = pd.to_datetime(df['Closed Date'], errors='coerce')
     df = df.dropna(subset=['Activated Date'])
@@ -39,6 +40,7 @@ def process_key_metrics(df, raw_df, scope_key, sprint_number):
     return df, total_items, total_story_points, avg_story_points, avg_exec_time, max_exec_time, min_exec_time, exec_time_std, tasks_without_estimate, top_variability_contributor, top_variability_value, top_contributors, sprint_info_line
 
 def generate_key_metrics(raw_df, df, sprint_number, total_items, tasks_without_estimate, avg_exec_time, max_exec_time, min_exec_time, exec_time_std, top_variability_contributor, top_variability_value, scope_key):
+    
     sprint_info_line = f"- Sprint Number: {sprint_number}" if scope_key == "sprint_review" and sprint_number else ""
     return f"""
         Key Metrics:
