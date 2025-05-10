@@ -1,7 +1,8 @@
 import pandas as pd
 
-def process_key_metrics(df, raw_df, scope_key, sprint_number):
+def process_key_metrics(raw_df, scope_key, sprint_number):
     
+    df = raw_df.copy()
     df['Activated Date'] = pd.to_datetime(df['Activated Date'], errors='coerce')
     df['Closed Date'] = pd.to_datetime(df['Closed Date'], errors='coerce')
     df = df.dropna(subset=['Activated Date'])
