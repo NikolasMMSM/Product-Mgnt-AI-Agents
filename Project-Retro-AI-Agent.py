@@ -146,24 +146,7 @@ if uploaded_file:
                 st.markdown("### 📌 Key Metrics")
                 st.code(key_metrics_text.strip(), language='markdown')
                 st.markdown("### 📊 Analysis Result")
-                st.text_area("",value=analysis, height=400, key="ai_report")
-                    
-                st.markdown("""
-                    <script>
-                        function copyReport() {
-                            const text = document.querySelector('textarea#ai_report')?.value;
-                            if (!text) {
-                                alert('No report found to copy.');
-                                return;
-                            }
-                            navigator.clipboard.writeText(text).then(function() {
-                                alert('Report copied to clipboard!');
-                            }, function(err) {
-                                alert('Failed to copy text: ' + err);
-                            });
-                        }
-                    </script>
-                        <button onclick="copyReport()">📋 Copy Report to Clipboard</button>
-                    """, unsafe_allow_html=True)
+                st.code(analysis, height=400, language='markdown')
+                
             except Exception as e:
                 st.error(f"Model consultation error: {e}")
