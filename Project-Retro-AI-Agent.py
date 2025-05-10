@@ -170,35 +170,7 @@ if uploaded_file:
                 st.markdown("### 📌 Key Metrics")
                 st.code(key_metrics_text.strip(), language='markdown')
                 st.markdown("### 📊 Analysis Result")
-                st.text_area("",value=analysis, height=400, key="ai_report")
+                st.code(analysis, height=400, language='markdown')
                 
-                st.markdown("""
-                    <script>
-                        setTimeout(() => {
-                            const textarea = window.parent.document.querySelector('textarea[data-testid="stTextArea"]');
-                            if (textarea) {
-                                textarea.setAttribute("id", "ai_report");
-                            }
-
-                            const button = window.parent.document.getElementById("copy-btn");
-                            if (button) {
-                                button.addEventListener("click", function () {
-                                    const text = document.getElementById("ai_report");
-                                    if (text) {
-                                        navigator.clipboard.writeText(text.value)
-                                            .then(() => alert("📋 Report copied to clipboard!"))
-                                            .catch(err => alert("❌ Failed to copy: " + err));
-                                    } else {
-                                        alert("❗ Report not found.");
-                                    }
-                                });
-                            }
-                        }, 1000);
-                    </script>
-                    <div style="margin-top: 10px;">
-                        <button id="copy-btn">📋 Copy Report to Clipboard</button>
-                    </div>
-                """, unsafe_allow_html=True)
-
             except Exception as e:
                 st.error(f"Model consultation error: {e}")
