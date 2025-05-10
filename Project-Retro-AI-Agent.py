@@ -182,7 +182,7 @@ if uploaded_file:
                                 }
                             }, 500);
                         });
-                
+
                         function copyReport() {
                             const text = document.getElementById("ai_report");
                             if (text) {
@@ -195,6 +195,9 @@ if uploaded_file:
                         }
                     </script>
                     <div style="margin-top: 10px;">
-                        <button onclick="copyReport()">📋 Copy Report to Clipboard</button>
+                        <button onclick=\"copyReport()\">📋 Copy Report to Clipboard</button>
                     </div>
                 """, unsafe_allow_html=True)
+
+            except Exception as e:
+                st.error(f"Model consultation error: {e}")
