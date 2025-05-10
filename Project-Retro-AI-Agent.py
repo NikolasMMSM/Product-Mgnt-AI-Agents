@@ -174,28 +174,29 @@ if uploaded_file:
                 
                 st.markdown("""
                     <script>
-                        window.addEventListener('load', function() {
-                            setTimeout(() => {
-                                const textarea = window.parent.document.querySelector('textarea[data-testid="stTextArea"]');
-                                if (textarea) {
-                                    textarea.setAttribute("id", "ai_report");
-                                }
-                            }, 500);
-                        });
-
-                        function copyReport() {
-                            const text = document.getElementById("ai_report");
-                            if (text) {
-                                navigator.clipboard.writeText(text.value)
-                                    .then(() => alert("📋 Report copied to clipboard!"))
-                                    .catch(err => alert("❌ Failed to copy: " + err));
-                            } else {
-                                alert("❗ Report not found.");
+                        setTimeout(() => {
+                            const textarea = window.parent.document.querySelector('textarea[data-testid="stTextArea"]');
+                            if (textarea) {
+                                textarea.setAttribute("id", "ai_report");
                             }
-                        }
+
+                            const button = window.parent.document.getElementById("copy-btn");
+                            if (button) {
+                                button.addEventListener("click", function () {
+                                    const text = document.getElementById("ai_report");
+                                    if (text) {
+                                        navigator.clipboard.writeText(text.value)
+                                            .then(() => alert("📋 Report copied to clipboard!"))
+                                            .catch(err => alert("❌ Failed to copy: " + err));
+                                    } else {
+                                        alert("❗ Report not found.");
+                                    }
+                                });
+                            }
+                        }, 1000);
                     </script>
                     <div style="margin-top: 10px;">
-                        <button onclick=\"copyReport()\">📋 Copy Report to Clipboard</button>
+                        <button id="copy-btn">📋 Copy Report to Clipboard</button>
                     </div>
                 """, unsafe_allow_html=True)
 
