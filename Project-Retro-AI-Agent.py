@@ -38,11 +38,9 @@ if uploaded_file:
      # Scope selector
     scope_options = {
         "Initial Planning Quality": "planning",
-        "Execution Monitoring": "execution",
-        "Sprint Review": "sprint_review",
-        "Delivery Summary": "delivery",
-        "Risk Analysis": "risk",
-        "Team Performance": "team"
+        "Execution Monitoring Report": "execution",
+        "Stakeholder Sprint Review Report": "sprint_review",
+        "Close-out Summary": "delivery",
     }
     selected_scope = st.selectbox("📌 2nd - What aspect of the project do you want to analyze?", list(scope_options.keys()))
     scope_key = scope_options[selected_scope]
@@ -55,7 +53,7 @@ if uploaded_file:
     from keymetrics import process_key_metrics 
     from keymetrics import generate_key_metrics
    
-    df, total_items, total_story_points, avg_story_points, avg_exec_time, max_exec_time, min_exec_time, exec_time_std, tasks_without_estimate, top_variability_contributor, top_variability_value, top_contributors, sprint_info_line = process_key_metrics(raw_df, scope_key, sprint_number)
+    df, total_items, total_story_points, total_closed_items, avg_story_points, avg_exec_time, max_exec_time, min_exec_time, exec_time_std, tasks_without_estimate, top_variability_contributor, top_variability_value, top_contributors, sprint_info_line = process_key_metrics(raw_df, scope_key, sprint_number)
 
     key_metrics_text = generate_key_metrics(
         raw_df=raw_df,
@@ -67,6 +65,7 @@ if uploaded_file:
         max_exec_time=max_exec_time,
         min_exec_time=min_exec_time,
         exec_time_std=exec_time_std,
+        total_closed_items=total_closed_items,
         top_variability_contributor=top_variability_contributor,
         top_variability_value=top_variability_value,
         scope_key=scope_key
@@ -109,6 +108,7 @@ if uploaded_file:
                     Project Data:
                     - Total items: {total_items}
                     - Total Story Points: {total_story_points}
+                    - Total Closed Items: {total_closed_items}
                     - Average Story Points per item: {avg_story_points}
                     - Average execution time per item: {avg_exec_time} days
                     - Maximum execution time for a single item: {max_exec_time} days

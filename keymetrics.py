@@ -1,7 +1,7 @@
 import pandas as pd
 
 def process_key_metrics(raw_df, scope_key, sprint_number):
-    
+
     df = raw_df.copy()
     df['Activated Date'] = pd.to_datetime(df['Activated Date'], errors='coerce')
     df['Closed Date'] = pd.to_datetime(df['Closed Date'], errors='coerce')
@@ -15,6 +15,7 @@ def process_key_metrics(raw_df, scope_key, sprint_number):
 
     total_items = len(df)
     total_story_points = df['Story Points'].sum()
+    total_closed_items = df['Closed Date'].notna().sum()
     avg_story_points = round(df['Story Points'].mean(), 2)
     avg_exec_time = round(df['Execution Time (days)'].mean(), 2) if 'Execution Time (days)' in df else 0
     max_exec_time = round(df['Execution Time (days)'].max(), 2) if 'Execution Time (days)' in df else 0
@@ -38,16 +39,17 @@ def process_key_metrics(raw_df, scope_key, sprint_number):
 
     sprint_info_line = f"- Sprint Number: {sprint_number}" if scope_key == "sprint_review" and sprint_number else ""
 
-    return df, total_items, total_story_points, avg_story_points, avg_exec_time, max_exec_time, min_exec_time, exec_time_std, tasks_without_estimate, top_variability_contributor, top_variability_value, top_contributors, sprint_info_line
+    return df, total_items, total_story_points, total_closed_items, avg_story_points, avg_exec_time, max_exec_time, min_exec_time, exec_time_std, tasks_without_estimate, top_variability_contributor, top_variability_value, top_contributors, sprint_info_line
 
-def generate_key_metrics(raw_df, df, sprint_number, total_items, tasks_without_estimate, avg_exec_time, max_exec_time, min_exec_time, exec_time_std, top_variability_contributor, top_variability_value, scope_key):
-    
+def generate_key_metrics(raw_df, df, sprint_number, total_items, total_closed_items, tasks_without_estimate, avg_exec_time, max_exec_time, min_exec_time, exec_time_std, top_variability_contributor, top_variability_value, scope_key):
+
     sprint_info_line = f"- Sprint Number: {sprint_number}" if scope_key == "sprint_review" and sprint_number else ""
     return f"""
         Key Metrics:
         {sprint_info_line}
         - Total items (raw): {len(raw_df)}
         - Items considered after filtering: {total_items}
+        - Items closed: {total_closed_items}
         - Tasks without Story Point estimate: {tasks_without_estimate}
         - Average execution time: {avg_exec_time} days
         - Max execution time: {max_exec_time} days
