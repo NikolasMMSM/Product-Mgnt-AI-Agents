@@ -35,9 +35,7 @@ if uploaded_file:
     # Reading CSV File
     raw_df = pd.read_csv(uploaded_file)
 
-    instructions = scope_config[scope_key]["instructions"]
-    
-    # Scope selector
+        # Scope selector
     scope_options = {
         "Initial Planning Quality": "planning",
         "Execution Monitoring": "execution",
