@@ -34,25 +34,6 @@ if uploaded_file:
 
     # Reading CSV File
     raw_df = pd.read_csv(uploaded_file)
-    from keymetrics import process_key_metrics
-    df, total_items, total_story_points, avg_story_points, avg_exec_time, max_exec_time, min_exec_time, exec_time_std, tasks_without_estimate, top_variability_contributor, top_variability_value, top_contributors, sprint_info_line = process_key_metrics(df, raw_df, scope_key, sprint_number)
-
-    from keymetrics import generate_key_metrics
-
-    key_metrics_text = generate_key_metrics(
-        raw_df=raw_df,
-        df=df,
-        sprint_number=sprint_number,
-        total_items=total_items,
-        tasks_without_estimate=tasks_without_estimate,
-        avg_exec_time=avg_exec_time,
-        max_exec_time=max_exec_time,
-        min_exec_time=min_exec_time,
-        exec_time_std=exec_time_std,
-        top_variability_contributor=top_variability_contributor,
-        top_variability_value=top_variability_value,
-        scope_key=scope_key
-    )
 
     instructions = scope_config[scope_key]["instructions"]
     
@@ -73,6 +54,26 @@ if uploaded_file:
     focus = scope_config[scope_key]["prompt"]
     instructions = scope_config[scope_key]["instructions"]   
     
+    #Importing key_metrics processing functions
+    from keymetrics import process_key_metrics
+    df, total_items, total_story_points, avg_story_points, avg_exec_time, max_exec_time, min_exec_time, exec_time_std, tasks_without_estimate, top_variability_contributor, top_variability_value, top_contributors, sprint_info_line = process_key_metrics(df, raw_df, scope_key, sprint_number)
+
+    from keymetrics import generate_key_metrics
+
+    key_metrics_text = generate_key_metrics(
+        raw_df=raw_df,
+        df=df,
+        sprint_number=sprint_number,
+        total_items=total_items,
+        tasks_without_estimate=tasks_without_estimate,
+        avg_exec_time=avg_exec_time,
+        max_exec_time=max_exec_time,
+        min_exec_time=min_exec_time,
+        exec_time_std=exec_time_std,
+        top_variability_contributor=top_variability_contributor,
+        top_variability_value=top_variability_value,
+        scope_key=scope_key
+    )
     # Filter per sprint if applicable
     if scope_key == "sprint_review":
         sprint_col = next(
@@ -147,6 +148,6 @@ if uploaded_file:
                 st.code(key_metrics_text.strip(), language='markdown')
                 st.markdown("### 📊 Analysis Result")
                 st.code(analysis, height=400, language='markdown')
-                
+
             except Exception as e:
                 st.error(f"Model consultation error: {e}")
