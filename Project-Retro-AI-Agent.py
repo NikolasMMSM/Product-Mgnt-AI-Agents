@@ -53,8 +53,8 @@ if uploaded_file:
     instructions = scope_config[scope_key]["instructions"]   
     
     #Importing key_metrics processing functions
-    from keymetrics import process_key_metrics
-    df, total_items, total_story_points, avg_story_points, avg_exec_time, max_exec_time, min_exec_time, exec_time_std, tasks_without_estimate, top_variability_contributor, top_variability_value, top_contributors, sprint_info_line = process_key_metrics(df, raw_df, scope_key, sprint_number)
+    from keymetrics import process_key_metrics 
+    df, total_items, total_story_points, avg_story_points, avg_exec_time, max_exec_time, min_exec_time, exec_time_std, tasks_without_estimate, top_variability_contributor, top_variability_value, top_contributors, sprint_info_line = process_key_metrics(df, raw_df, scope_key, sprint_number
 
     from keymetrics import generate_key_metrics
 
