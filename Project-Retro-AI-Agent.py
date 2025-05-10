@@ -34,8 +34,8 @@ if uploaded_file:
 
     # Reading CSV File
     raw_df = pd.read_csv(uploaded_file)
-
-        # Scope selector
+    
+     # Scope selector
     scope_options = {
         "Initial Planning Quality": "planning",
         "Execution Monitoring": "execution",
@@ -48,11 +48,10 @@ if uploaded_file:
     scope_key = scope_options[selected_scope]
 
     # Sprint number input (only for Sprint Review scope)
-   
     focus = scope_config[scope_key]["prompt"]
     instructions = scope_config[scope_key]["instructions"]   
     
-    #Importing key_metrics processing functions
+    #Importing processing functions
     from keymetrics import process_key_metrics 
     from keymetrics import generate_key_metrics
    
@@ -72,6 +71,7 @@ if uploaded_file:
         top_variability_value=top_variability_value,
         scope_key=scope_key
     )
+
     # Filter per sprint if applicable
     if scope_key == "sprint_review":
         sprint_col = next(
@@ -87,6 +87,7 @@ if uploaded_file:
         if sprint_col and sprint_number:
                 df = df[df[sprint_col].astype(str).str.contains(sprint_number.strip(), case=False)]
     
+
 
     # CTA Button
     if st.button("🔍 Generate AI Analysis"):
