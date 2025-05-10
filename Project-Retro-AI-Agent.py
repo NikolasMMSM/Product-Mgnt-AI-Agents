@@ -171,29 +171,30 @@ if uploaded_file:
                 st.code(key_metrics_text.strip(), language='markdown')
                 st.markdown("### 📊 Analysis Result")
                 st.text_area("",value=analysis, height=400, key="ai_report")
-                    
+                
                 st.markdown("""
                     <script>
-                        // Atribui manualmente o ID após renderização
-                        const textarea = window.parent.document.querySelector('textarea[data-testid="stTextArea"]');
-                        if (textarea) {
-                            textarea.id = "ai_report";
-                        }
-
+                        window.addEventListener('load', function() {
+                            setTimeout(() => {
+                                const textarea = window.parent.document.querySelector('textarea[data-testid="stTextArea"]');
+                                if (textarea) {
+                                    textarea.setAttribute("id", "ai_report");
+                                }
+                            }, 500);
+                        });
+                
                         function copyReport() {
-                            const text = document.getElementById("ai_report")?.value;
-                            if (!text) {
-                                alert('No report found to copy.');
-                                return;
+                            const text = document.getElementById("ai_report");
+                            if (text) {
+                                navigator.clipboard.writeText(text.value)
+                                    .then(() => alert("📋 Report copied to clipboard!"))
+                                    .catch(err => alert("❌ Failed to copy: " + err));
+                            } else {
+                                alert("❗ Report not found.");
                             }
-                            navigator.clipboard.writeText(text).then(function() {
-                                alert('Report copied to clipboard!');
-                            }, function(err) {
-                                alert('Failed to copy text: ' + err);
-                            });
                         }
                     </script>
-                    <button onclick=\"copyReport()\">📋 Copy Report to Clipboard</button>
+                    <div style="margin-top: 10px;">
+                        <button onclick="copyReport()">📋 Copy Report to Clipboard</button>
+                    </div>
                 """, unsafe_allow_html=True)
-            except Exception as e:
-                st.error(f"Model consultation error: {e}")
