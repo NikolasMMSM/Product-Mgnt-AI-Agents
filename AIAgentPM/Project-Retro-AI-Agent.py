@@ -9,7 +9,7 @@ from prompts import scope_config
 # Load environment variables
 # If you're deploying this code to Streamlit Cloud, you may will need to comment line 12
 # and define OPENAI_API_KEY directly in the app's Secrets Manager instead.
-# load_dotenv(dotenv_path="envconfig.env")
+# load_dotenv(dotenv_path="env.env")
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 st.set_page_config(page_title="AI Agent - Project Consultant", layout="wide")
