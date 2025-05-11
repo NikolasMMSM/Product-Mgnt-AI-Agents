@@ -1,5 +1,5 @@
 # Arquivo de variáveis sensíveis
-envconfig.env
+env.env
 
 # Dados de execução e caches
 __pycache__/
