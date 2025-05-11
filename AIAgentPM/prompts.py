@@ -10,12 +10,22 @@ scope_config = {
             "- Tasks with missing story point estimates.\n"
             "- Tasks with high complexity but short delivery windows.\n"
             "- Potential overcommitment in sprint scope."
+            
         ),
         "instructions": (
             "- Group findings into meaningful sections (e.g., Estimation Hygiene, Timeline Realism).\n"
             "- Use bullet points for insights and recommendations.\n"
             "- Keep the tone professional and oriented to business stakeholders.\n"
             "- End the report with actionable suggestions for the team to improve future planning."
+            "Also: \n"
+            "After the written analysis, generate Python code using pandas and matplotlib (as plt) to create a visualization\n"
+            "- Use `df` as the DataFrame.\n"
+            "- Create only **one** relevant plot to illustrate the total of user stories per sprint.\n"
+            "- Set `figsize=(6,4)`.\n"
+            "- Assign the final figure to a variable named `result`.\n"
+            "- Return the code inside a ```python code block.\n"
+            "- Do NOT set `result = plt`. Instead, assign `result = plt.gcf()` or the figure created.\n"
+            "- It is mandatory to include both the text report and the code block in the response."
         )
     },
 
@@ -39,6 +49,15 @@ scope_config = {
             "- Use bullet points for each insight.\n"
             "- Be direct but constructive — the reader is the Product Manager.\n"
             "- Conclude with recommendations and/or action items to improve delivery going forward."
+            "Also: \n"
+            "After the written analysis, generate Python code using pandas and matplotlib (as plt) to create a visualization\n"
+            "- Use `df` as the DataFrame.\n"
+            "- Create only **one** relevant plot to illustrate the execution performance throughout the sprints. (e.g., a bar chart or histogram).\n"
+            "- Set `figsize=(6,4)`.\n"
+            "- Assign the final figure to a variable named `result`.\n"
+            "- Return the code inside a ```python code block.\n"
+            "- Do NOT set `result = plt`. Instead, assign `result = plt.gcf()` or the figure created.\n"
+            "- It is mandatory to include both the text report and the code block in the response."
         )
     },
 
@@ -69,6 +88,15 @@ scope_config = {
             "- Mention any feedback received and alignment with the sprint goal.\n"
             "- Emphasize positive outcomes and team contributions.\n"
             "- Use a tone that informs both technical and non-technical audiences while being always positive."
+            "Also: \n"
+            "After the written analysis, generate Python code using pandas and matplotlib (as plt) to create a visualization\n"
+            "- Use `df` as the DataFrame.\n"
+            "- Create only **one** relevant plot to illustrate the Actual 'User Story Completed' versus the expected up to today 'User Story Completed'. \n"
+            "- Set `figsize=(6,4)`.\n"
+            "- Assign the final figure to a variable named `result`.\n"
+            "- Return the code inside a ```python code block.\n"
+            "- Do NOT set `result = plt`. Instead, assign `result = plt.gcf()` or the figure created.\n"
+            "- It is mandatory to include both the text report and the code block in the response."
         )   
     },
     "delivery": {
@@ -80,6 +108,15 @@ scope_config = {
             "- Generate an executive summary."
             "- Highlight strengths, bottlenecks, and performance patterns."
             "- Suggest areas for improvement in future deliveries."
+            "Also: \n"
+            "After the written analysis, generate Python code using pandas and matplotlib (as plt) to create a visualization\n"
+            "- Use `df` as the DataFrame.\n"
+            "- Create only **one** relevant plot to illustrate the delivery performance throughout the sprints. (e.g., a bar chart or histogram).\n"
+            "- Set `figsize=(6,4)`.\n"
+            "- Assign the final figure to a variable named `result`.\n"
+            "- Return the code inside a ```python code block.\n"
+            "- Do NOT set `result = plt`. Instead, assign `result = plt.gcf()` or the figure created.\n"
+            "- It is mandatory to include both the text report and the code block in the response."
         )
     }
 }

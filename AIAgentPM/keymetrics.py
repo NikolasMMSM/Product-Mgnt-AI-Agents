@@ -3,30 +3,36 @@ import pandas as pd
 def process_key_metrics(raw_df, scope_key, sprint_number):
 
     df = raw_df.copy()
-    df['Activated Date'] = pd.to_datetime(df['Activated Date'], errors='coerce')
-    df['Closed Date'] = pd.to_datetime(df['Closed Date'], errors='coerce')
-    df = df.dropna(subset=['Activated Date'])
-    df['Execution Time (days)'] = (df['Closed Date'] - df['Activated Date']).dt.days
+    df['Activated Date'] = pd.to_datetime(df.get('Activated Date'), errors='coerce')
+    df['Created Date'] = pd.to_datetime(df.get('Created Date'), errors='coerce')
+    df['Closed Date'] = pd.to_datetime(df.get('Closed Date'), errors='coerce')
 
-    if scope_key == "sprint_review":
+    if scope_key == "planning":
+        df = df.dropna(subset=["Created Date"])
+        df['Execution Time (days)'] = pd.NA  # não calcula tempo
+    elif scope_key == "sprint_review" and sprint_number:
         sprint_col = next((col for col in df.columns if "iteration path" in col.lower()), None)
-        if sprint_col and sprint_number:
-            sprint_filter = rf"{sprint_number.strip()}"
-            df = df[df[sprint_col].astype(str).str.contains(sprint_filter, case=False)]
-            if df.empty:
-                raise ValueError(f"No items found for the selected sprint: {sprint_number}")
+        if sprint_col:
+            df = df[df[sprint_col] == sprint_number]
+        df['Execution Time (days)'] = (df['Closed Date'] - df['Activated Date']).dt.days
+    else:
+        df['Execution Time (days)'] = (df['Closed Date'] - df['Activated Date']).dt.days
 
+ 
     total_items = len(df)
     total_story_points = df['Story Points'].sum()
     total_closed_items = df['Closed Date'].notna().sum()
     avg_story_points = round(df['Story Points'].mean(), 2)
-    avg_exec_time = round(df['Execution Time (days)'].mean(), 2) if 'Execution Time (days)' in df else 0
-    max_exec_time = round(df['Execution Time (days)'].max(), 2) if 'Execution Time (days)' in df else 0
-    min_exec_time = round(df['Execution Time (days)'].min(), 2) if 'Execution Time (days)' in df else 0
-    exec_time_std = round(df['Execution Time (days)'].std(), 2) if 'Execution Time (days)' in df else 0
+    avg_exec_time = (round(df['Execution Time (days)'].mean(), 2) if df['Execution Time (days)'].notna().any() else "N/A")
+    max_exec_time = (round(df['Execution Time (days)'].max(), 2) if df['Execution Time (days)'].notna().any() else "N/A")
+    min_exec_time = (round(df['Execution Time (days)'].min(), 2) if df['Execution Time (days)'].notna().any() else "N/A")
+    exec_time_std = (round(df['Execution Time (days)'].std(), 2) if df['Execution Time (days)'].notna().any() else "N/A")
 
     tasks_without_estimate = df['Story Points'].isna().sum()
-    contributor_variability = df.groupby('Assigned To')['Execution Time (days)'].std().sort_values(ascending=False)
+    if df['Execution Time (days)'].dropna().empty:
+        contributor_variability = pd.Series(dtype='float64')
+    else:
+        contributor_variability = df.groupby('Assigned To')['Execution Time (days)'].std().sort_values(ascending=False)
     top_variability_contributor = contributor_variability.idxmax() if not contributor_variability.empty else "N/A"
     top_variability_value = round(contributor_variability.max(), 2) if not contributor_variability.empty else 0
 

@@ -1,13 +1,14 @@
 import streamlit as st
 import pandas as pd
-import os
+import os, io, re
+import matplotlib.pyplot as plt
 from datetime import datetime
 from dotenv import load_dotenv
 from prompts import scope_config
 from keymetrics import process_key_metrics, generate_key_metrics
 from openai import OpenAI
 
-# === Load environment variables ===
+# === Load environment variables (comment here if running through streamlit web)===
 base_dir = os.path.dirname(os.path.abspath(__file__))
 env_path = os.path.join(base_dir, "..", "..", "..", "env.env")
 load_dotenv(dotenv_path=env_path)
@@ -25,7 +26,7 @@ st.set_page_config(page_title="AI Agent - Project Consultant", layout="wide")
 st.markdown("""
     <style>
         .block-container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: auto;
         }
     </style>
@@ -42,18 +43,29 @@ if uploaded_file:
     raw_df = pd.read_csv(uploaded_file)
 
     scope_options = {
-        "Initial Planning Quality": "planning",
-        "Execution Monitoring Report": "execution",
-        "Stakeholder Sprint Review Report": "sprint_review",
-        "Close-out Summary": "delivery",
+        "Internal - Initial Planning Quality": "planning",
+        "Internal - Execution Monitoring": "execution",
+        "External - Status Report": "sprint_review",
+        "Close-out": "delivery",
     }
     selected_scope = st.selectbox("📌 2nd - What aspect of the project do you want to analyze?", list(scope_options.keys()))
     scope_key = scope_options[selected_scope]
     focus = scope_config[scope_key]["prompt"]
     instructions = scope_config[scope_key]["instructions"]
-
+    
+    if scope_key == "sprint_review":
+        sprint_col = next((col for col in raw_df.columns if "iteration path" in col.lower()), None)
+        if sprint_col:
+            raw_sprints = sorted(raw_df[sprint_col].dropna().unique())
+            sprint_map = {opt.split("\\")[-1]: opt for opt in raw_sprints}
+            selected_label = st.selectbox("📅 Select the Sprint you are reviewing (*required)", list(sprint_map.keys()))
+            sprint_number = sprint_map[selected_label]
+            df = raw_df[raw_df[sprint_col] == sprint_number]
+    elif scope_key == "planning":
+            df = raw_df.dropna(subset=["Created Date"])
+    
     df, total_items, total_story_points, total_closed_items, avg_story_points, avg_exec_time, max_exec_time, min_exec_time, exec_time_std, tasks_without_estimate, top_variability_contributor, top_variability_value, top_contributors, sprint_info_line = process_key_metrics(raw_df, scope_key, sprint_number)
-
+    
     key_metrics_text = generate_key_metrics(
         raw_df=raw_df,
         df=df,
@@ -69,16 +81,6 @@ if uploaded_file:
         top_variability_value=top_variability_value,
         scope_key=scope_key
     )
-
-    if scope_key == "sprint_review":
-        sprint_col = next((col for col in df.columns if "iteration path" in col.lower()), None)
-        sprint_options = sorted(df[sprint_col].dropna().unique()) if sprint_col else []
-        if sprint_options:
-            sprint_number = st.selectbox("📅 Select the Sprint you are reviewing (*required)", sprint_options)
-        else:
-            sprint_number = st.text_input("📅 Enter the Sprint Number you are reviewing (*required)")
-        if sprint_col and sprint_number:
-            df = df[df[sprint_col].astype(str).str.contains(sprint_number.strip(), case=False)]
 
     # === Provider Selection ===
     provider = st.radio(
@@ -138,23 +140,50 @@ if uploaded_file:
 
                 st.markdown("### 📌 Key Metrics")
                 st.code(key_metrics_text.strip(), language='markdown')
-                st.markdown("### 📈 Analysis Result")
+                           
+                st.markdown("### 📈 Analysis Result")            
+                
                 if provider == "nvidia":
-                    think_start = analysis.find("<think>")
-                think_end = analysis.find("</think>")
-                if think_start != -1 and think_end != -1:
-                    reasoning = analysis[think_start + 7:think_end].strip()
-                    final_response = (analysis[:think_start] + analysis[think_end + 8:]).strip()
+                    think_match = re.search(r"<think>(.*?)</think>", analysis, re.DOTALL)
+                    reasoning = think_match.group(1).strip() if think_match else ""
+                    final_response = re.sub(r"<think>.*?</think>", "", analysis, flags=re.DOTALL).strip()
+                    with st.expander("🧠 AI Reasoning", expanded=False):
+                        st.markdown(reasoning)
                 else:
                     reasoning = ""
                     final_response = analysis
+                
+                # st.markdown(final_response)
+                
+                # # Extract and optionally run a matplotlib plot from the response
+                code_match = re.search(r"```python(.*?)```", final_response, re.DOTALL)
+                if code_match:
+                    code_snippet = code_match.group(1).strip()
+                    parts = re.split(r"```python.*?```", final_response, flags=re.DOTALL)
+                    reasoning_part = parts[0].strip() if parts else ""
+                    post_code_part = parts[1].strip() if len(parts) > 1 else ""
+                    try:
+                        env = {"df": df, "pd": pd, "plt": plt, "io": io}
+                        exec(code_snippet, {}, env)
+                        result_obj = env.get("result")
+                    except Exception as exec_err:
+                        result_obj = None
+                        st.warning(f"Error running generated plot code: {exec_err}")
 
-                st.markdown(final_response)
-                if reasoning:
-                    with st.expander("💡 AI Reasoning", expanded=False):
-                        st.markdown(reasoning)
-                else:
-                    st.code(analysis, height=400, language='markdown')
-
+                    if reasoning_part:
+                        st.markdown(reasoning_part)
+                    if result_obj:
+                        if isinstance(result_obj, plt.Figure):
+                            st.pyplot(result_obj)
+                        elif hasattr(result_obj, 'figure') and isinstance(result_obj.figure, plt.Figure):
+                            st.pyplot(result_obj.figure)
+                        else:
+                            st.warning("⚠️ The code ran but did not return a valid matplotlib Figure. Make sure `result` is set to a plot object.")
+                    if post_code_part:
+                        st.markdown(post_code_part)
+                   
+                    st.markdown("---")
+                    st.code(code_snippet, language='python')
+                    
             except Exception as e:
                 st.error(f"Model consultation error: {e}")
