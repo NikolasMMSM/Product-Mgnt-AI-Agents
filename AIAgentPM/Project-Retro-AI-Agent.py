@@ -107,6 +107,7 @@ if uploaded_file:
                     - Total Closed Items: {total_closed_items}
                     - Average Story Points per item: {avg_story_points}
                     - The Sprint information can be found in Iteration Path column in the data frame\n
+                    - The only Work Item Type that will receive Story Points is User Stories.
                     - Maximum execution time for a single item: {max_exec_time} days
                     - Minimum execution time for a single item: {min_exec_time} days
                     - Standard deviation of execution time: {exec_time_std} days
