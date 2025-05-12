@@ -1,20 +1,40 @@
-# 🤖 AI Agent – Agile Project Analysis For Project/Product Managers
+# 🤖 AI Agent – Agile Project Intelligence for Product & Project Managers
 
-This project is a Streamlit-based AI assistant that analyzes agile project data exported from Azure DevOps. The agent acts as a **digital consultant**, capable of evaluating project planning, in-progress performance, or retrospective insights — depending on the current status of the project.
+This Streamlit-based AI Agent acts as a **digital consultant** to help Product Managers, Scrum Masters, and Agile Leads extract insights from project data exported from Azure DevOps. It offers dynamic analyses tailored to different project stages: planning, execution monitoring, sprint review, and delivery retrospectives.
 
-## 🔍 What it does
+---
+
+## 🔍 What It Does
 
 Given a `.csv` file exported from Azure DevOps, the agent will:
 
-- 📅 Evaluate **initial planning** based on effort vs. deadlines
-- 📈 Monitor **in-progress performance**, risk and workload distribution
-- ✅ Provide **retrospective insights** when the project is completed:
-  - Execution summary
-  - Contributor performance
-  - Estimation consistency
-  - Strategic improvement suggestions
+- 📌 Analyze **initial planning** for:
+  - Unrealistic deadlines
+  - Missing story point estimates
+  - Overcommitment or complexity mismatches
+
+- 🚦 Monitor **in-progress execution**:
+  - Risk exposure
+  - Task effort vs. velocity
+  - Contributor variability
+
+- 🧾 Produce **sprint review reports**:
+  - What was accomplished vs. planned
+  - Who contributed the most
+  - Cycle time inconsistencies
+
+- ✅ Generate **retrospective delivery insights**:
+  - Summary of execution
+  - Estimation hygiene
+  - Strategic recommendations for future planning
+
+- 📊 Optionally, generate **Python code with pandas + matplotlib** to visualize the user story distribution in the project.
+
+---
 
 ## 📂 CSV Requirements
+
+Your file must contain at least the following columns:
 
 The file should contain at least the following columns:
 
@@ -43,7 +63,8 @@ The file should contain at least the following columns:
 
 2. Create a file named `envconfig.env` with your OpenAI API key:
    ```
-   OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   OPENAI_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxx
+   OPENAI_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxx
    ```
 
 3. Launch the app:
@@ -60,7 +81,11 @@ You will be prompted to select one of the following project statuses:
 
 ## ⚠️ Disclaimer
 
-This app uses the GPT-3.5-turbo API from OpenAI. Please keep your API key secure and monitor your usage according to your OpenAI plan.
+This app uses the GPT-3.5-turbo API from OpenAI or NVIDIA's Llama-3.1-Nemotron-Ultra-253B-v1 . 
+Please keep your API key secure and monitor your usage according to your OpenAI.
+For set up the NVIDA's Llama-3.1-Nemotron-Ultra-253B-v1 API key:
+- Sign up or log in at (NVIDIA Build)[https://build.nvidia.com/nvidia/llama-3_1-nemotron-ultra-253b-v1?integrate_nim=true&hosted_api=true&modal=integrate-nim]
+- Generate an API key
 
 ---
 
