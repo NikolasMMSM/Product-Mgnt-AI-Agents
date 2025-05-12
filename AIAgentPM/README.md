@@ -81,11 +81,11 @@ You will be prompted to select one of the following project statuses:
 
 ## ⚠️ Disclaimer
 
-This app uses the GPT-3.5-turbo API from OpenAI or NVIDIA's Llama-3.1-Nemotron-Ultra-253B-v1. \n 
-Please keep your API key secure and monitor your usage according to your OpenAI.\n
-For set up the NVIDA's Llama-3.1-Nemotron-Ultra-253B-v1 API key:
-- Sign up or log in at [NVIDIA Build](https://build.nvidia.com/nvidia/llama-3_1-nemotron-ultra-253b-v1?integrate_nim=true&hosted_api=true&modal=integrate-nim)
-- Generate an API key
+- This app uses the GPT-3.5-turbo API from OpenAI or NVIDIA's Llama-3.1-Nemotron-Ultra-253B-v1. 
+- Please keep your API key secure and monitor your usage according to your OpenAI.\n
+- For set up the NVIDA's Llama-3.1-Nemotron-Ultra-253B-v1 API key:
+-- Sign up or log in at [NVIDIA Build](https://build.nvidia.com/nvidia/llama-3_1-nemotron-ultra-253b-v1?integrate_nim=true&hosted_api=true&modal=integrate-nim)
+-- Generate an API key
 
 ---
 
