@@ -106,6 +106,7 @@ if uploaded_file:
                     - Total Story Points: {total_story_points}
                     - Total Closed Items: {total_closed_items}
                     - Average Story Points per item: {avg_story_points}
+                    - The Sprint information can be found in Iteration Path column in the data frame\n
                     - Maximum execution time for a single item: {max_exec_time} days
                     - Minimum execution time for a single item: {min_exec_time} days
                     - Standard deviation of execution time: {exec_time_std} days
